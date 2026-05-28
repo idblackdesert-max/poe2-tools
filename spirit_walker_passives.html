@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spirit Walker — Passive Tree Guide 0.5</title>
+<style>
+:root {
+  --bg: #0d0d0f; --surface: #16161a; --surface2: #1e1e24;
+  --border: #2a2a35; --text: #e0e0e8; --muted: #8888aa;
+  --green: #4ecb71; --red: #e05555; --yellow: #e0b84e;
+  --blue: #4e9fe0; --purple: #a07fe0; --orange: #e07a4e; --teal: #4ecbc0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
+.header { background: linear-gradient(135deg,#1a0d2e,#0d1a2e,#0d2e1a); border-bottom: 2px solid var(--purple); padding: 24px; text-align: center; }
+.header h1 { font-size: 24px; color: var(--purple); margin-bottom: 6px; }
+.header .sub { color: var(--muted); font-size: 13px; }
+nav { background: var(--surface); border-bottom: 1px solid var(--border); display: flex; gap: 2px; padding: 0 16px; overflow-x: auto; }
+nav button { background: none; border: none; color: var(--muted); padding: 12px 18px; font-size: 13px; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
+nav button:hover, nav button.active { color: var(--text); border-bottom-color: var(--purple); }
+.container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+.tab-content { display: none; } .tab-content.active { display: block; }
+h2 { font-size: 17px; color: var(--purple); border-left: 3px solid var(--purple); padding-left: 10px; margin-bottom: 16px; margin-top: 8px; }
+h3 { font-size: 14px; color: var(--yellow); margin-bottom: 8px; margin-top: 14px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 12px; }
+.card-green { border-left: 3px solid var(--green); }
+.card-yellow { border-left: 3px solid var(--yellow); }
+.card-red { border-left: 3px solid var(--red); }
+.card-blue { border-left: 3px solid var(--blue); }
+.card-purple { border-left: 3px solid var(--purple); }
+.phase-label { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; margin-bottom: 10px; }
+.phase-campaign { background: rgba(78,203,113,.15); border: 1px solid var(--green); color: var(--green); }
+.phase-post { background: rgba(160,127,224,.15); border: 1px solid var(--purple); color: var(--purple); }
+.phase-asc { background: rgba(224,184,78,.15); border: 1px solid var(--yellow); color: var(--yellow); }
+
+/* Tree nodes */
+.tree-wrap { position: relative; overflow: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px; }
+.tree-svg { display: block; }
+.node { cursor: pointer; }
+.node circle { stroke-width: 2; transition: r .15s; }
+.node:hover circle { r: 18; }
+.node text { font-size: 10px; fill: var(--text); text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
+.node.keystone circle { stroke-width: 3; }
+.node.start circle { fill: #1e2e1e; stroke: var(--green); }
+.node-campaign circle { fill: #1e281e; stroke: var(--green); }
+.node-post circle { fill: #1e1e2e; stroke: var(--purple); }
+.node-asc circle { fill: #2e2810; stroke: var(--yellow); }
+.node-small circle { fill: var(--surface2); stroke: var(--border); }
+.edge-campaign { stroke: var(--green); stroke-opacity: .5; stroke-width: 1.5; fill: none; }
+.edge-post { stroke: var(--purple); stroke-opacity: .5; stroke-width: 1.5; fill: none; }
+.edge-inactive { stroke: var(--border); stroke-opacity: .3; stroke-width: 1; fill: none; }
+
+/* Tooltip */
+#tooltip { position: fixed; background: var(--surface); border: 1px solid var(--purple); border-radius: 6px; padding: 10px 14px; font-size: 12px; max-width: 280px; pointer-events: none; z-index: 100; display: none; box-shadow: 0 8px 24px rgba(0,0,0,.6); }
+#tooltip .tt-name { font-weight: 700; color: var(--purple); margin-bottom: 4px; font-size: 13px; }
+#tooltip .tt-kind { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+#tooltip .tt-stat { color: var(--green); margin-bottom: 2px; }
+
+/* Node step list */
+.node-list { display: grid; gap: 8px; }
+.node-item { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; display: flex; gap: 12px; align-items: flex-start; }
+.node-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0; }
+.ni-keystone { background: rgba(224,184,78,.2); border: 2px solid var(--yellow); color: var(--yellow); }
+.ni-notable { background: rgba(78,203,113,.15); border: 2px solid var(--green); color: var(--green); }
+.ni-small { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); }
+.node-item .ni-name { font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.node-item .ni-stat { font-size: 12px; color: var(--green); }
+.node-item .ni-note { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+.hop-badge { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 2px 8px; font-size: 11px; color: var(--muted); margin-left: auto; flex-shrink: 0; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media(max-width:700px) { .two-col { grid-template-columns: 1fr; } }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: var(--surface2); color: var(--purple); padding: 8px 10px; text-align: left; border-bottom: 2px solid var(--border); }
+td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.tag-k { background: rgba(224,184,78,.15); border: 1px solid var(--yellow); color: var(--yellow); }
+.tag-n { background: rgba(78,203,113,.15); border: 1px solid var(--green); color: var(--green); }
+.tag-s { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); }
+.alert { padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; font-size: 13px; }
+.alert-blue { background: rgba(78,159,224,.1); border: 1px solid rgba(78,159,224,.3); color: var(--blue); }
+.alert-green { background: rgba(78,203,113,.1); border: 1px solid rgba(78,203,113,.3); color: var(--green); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Spirit Walker — Passive Tree Guide</h1>
+  <div class="sub">Huntress | Patch 0.5 Runes of Aldur | ข้อมูลจาก passive tree จริง 5,102 nodes</div>
+</div>
+
+<nav>
+  <button class="active" onclick="showTab('campaign')">📍 Campaign (ก่อน Ascendancy)</button>
+  <button onclick="showTab('post')">⭐ หลัง Spirit Walker</button>
+  <button onclick="showTab('asc')">🔮 Ascendancy Picks</button>
+  <button onclick="showTab('map')">🗺️ Visual Tree</button>
+</nav>
+
+<div id="tooltip">
+  <div class="tt-name" id="tt-name"></div>
+  <div class="tt-kind" id="tt-kind"></div>
+  <div id="tt-stats"></div>
+</div>
+
+<!-- =================== CAMPAIGN TAB =================== -->
+<div id="tab-campaign" class="tab-content active">
+<div class="container">
+  <div class="alert alert-green">
+    เป้าหมาย Campaign: เก็บ Companion Life + Companion Damage clusters ใกล้ Huntress start ก่อน → ไล่ไปยัง Unspoken Bond + Nurturing Guardian ฝั่งขวา
+  </div>
+
+  <h2>Phase 1 — เริ่มต้นจาก Huntress Start (LVL 1–30)</h2>
+  <div class="node-list">
+    <div class="node-item">
+      <div class="node-icon ni-small">★</div>
+      <div>
+        <div class="ni-name">Huntress / Ranger Classstart</div>
+        <div class="ni-stat">จุดเริ่มต้น — Dex base</div>
+        <div class="ni-note">เดินออกจาก start ไปทาง companion cluster ทางด้าน y บวก (ใต้)</div>
+      </div>
+    </div>
+    <div class="node-item">
+      <div class="node-icon ni-small">S</div>
+      <div>
+        <div class="ni-name">Small nodes บน path (14–16 hops)</div>
+        <div class="ni-stat">Evasion, Attribute, Companion Damage 12%, Companion Life 12%</div>
+        <div class="ni-note">เก็บตามทางที่ BFS path ผ่าน — ไม่ต้องตามทุก node แต่เก็บที่เจอเพราะถูกแล้ว</div>
+      </div>
+      <div class="hop-badge">~14 hops</div>
+    </div>
+  </div>
+
+  <h2>Phase 2 — Companion Cluster ใกล้ Huntress (LVL 20–40)</h2>
+  <div class="node-list">
+    <div class="node-item">
+      <div class="node-icon ni-notable">N</div>
+      <div>
+        <div class="ni-name">Nourishing Ally</div>
+        <div class="ni-stat">Companions +20% max Life | 20% increased Life Recovery Rate while companion in Presence</div>
+        <div class="ni-note">เป้าแรก — Companion survivability โดยตรง ไม่มีเงื่อนไข</div>
+      </div>
+      <div class="hop-badge">14 hops</div>
+    </div>
+    <div class="node-item">
+      <div class="node-icon ni-small" style="background:rgba(224,120,78,.15);border-color:#e07a4e;color:#e07a4e;">⚠</div>
+      <div>
+        <div class="ni-name">Sic 'Em — ข้าม (Conditional)</div>
+        <div class="ni-stat">Companions deal 60% increased damage against Immobilised enemies</div>
+        <div class="ni-note">Build นี้ Physical/Fire ล้วน ไม่มี Freeze/Snare source → Immobilised ไม่ proc เอง — ข้ามได้เลย ถ้าต้องผ่านบน path ไป Nourishing Ally ค่อยเก็บ</div>
+      </div>
+      <div class="hop-badge">14 hops</div>
+    </div>
+    <div class="node-item">
+      <div class="node-icon ni-small">S</div>
+      <div>
+        <div class="ni-name">Companion Damage + Life (small nodes)</div>
+        <div class="ni-stat">Companions deal 12% increased Damage + Companions have 12% increased max Life</div>
+        <div class="ni-note">อยู่รอบๆ Nourishing Ally — เก็บตามทาง</div>
+      </div>
+    </div>
+    <div class="node-item">
+      <div class="node-icon ni-small">S</div>
+      <div>
+        <div class="ni-name">Defences and Companion Life (small)</div>
+        <div class="ni-stat">Companions +12% max Life | +10% Armour/Eva/ES while companion in Presence</div>
+        <div class="ni-note">บน path ไป Unspoken Bond — เก็บตามทาง</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Phase 3 — Companion Resistance Cluster ฝั่งขวา (LVL 40–55)</h2>
+  <div class="node-list">
+    <div class="node-item">
+      <div class="node-icon ni-notable">N</div>
+      <div>
+        <div class="ni-name">Unspoken Bond</div>
+        <div class="ni-stat">Companions +30% Chaos Resistance | Companions +30% all Elemental Resistances</div>
+        <div class="ni-note">สำคัญ — Companion resist cap ช่วยให้ Bear + Beast อยู่รอดได้</div>
+      </div>
+      <div class="hop-badge">16 hops</div>
+    </div>
+    <div class="node-item">
+      <div class="node-icon ni-notable">N</div>
+      <div>
+        <div class="ni-name">Nurturing Guardian</div>
+        <div class="ni-stat">Life Recovery from Flasks also applies to Companions</div>
+        <div class="ni-note">ติดกับ Unspoken Bond — Flask heal Bear ด้วย</div>
+      </div>
+      <div class="hop-badge">16 hops</div>
+    </div>
+    <div class="node-item">
+      <div class="node-icon ni-small">S</div>
+      <div>
+        <div class="ni-name">Ailment Threshold and Companion Resistance (small)</div>
+        <div class="ni-stat">8% Elemental Ailment Threshold | Companions +12% all Elemental Resistances</div>
+        <div class="ni-note">อยู่บน path ระหว่าง Unspoken Bond กับ Nurturing Guardian</div>
+      </div>
+    </div>
+    <div class="node-item">
+      <div class="node-icon ni-small">S</div>
+      <div>
+        <div class="ni-name">Companion Revive Speed (small)</div>
+        <div class="ni-stat">Companions +12% max Life | +10% Armour/Eva/ES while companion in Presence</div>
+        <div class="ni-note">อยู่ระหว่าง Nurturing Guardian กับ Unspoken Bond</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-yellow" style="margin-top:16px;">
+    <h3 style="margin-top:0;">สรุป Campaign Priority (ก่อน Ascendancy)</h3>
+    <table>
+      <thead><tr><th>ลำดับ</th><th>Node</th><th>Effect สำคัญ</th><th>Hop</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><span class="tag tag-n">Nourishing Ally</span></td><td>+20% companion life + Life Recovery Rate</td><td>14</td></tr>
+        <tr><td>—</td><td><span class="tag tag-s">Sic 'Em (ข้าม)</span></td><td>Build ไม่มี Immobilise source</td><td>14</td></tr>
+        <tr><td>3</td><td><span class="tag tag-n">Unspoken Bond</span></td><td>+30% all companion resists</td><td>16</td></tr>
+        <tr><td>4</td><td><span class="tag tag-n">Nurturing Guardian</span></td><td>Flask heals companion</td><td>16</td></tr>
+        <tr><td>—</td><td><span class="tag tag-s">Small nodes</span></td><td>Companion Dmg 12%, Companion Life 12%, Attribute</td><td>ตามทาง</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- =================== POST-ASCENDANCY TAB =================== -->
+<div id="tab-post" class="tab-content">
+<div class="container">
+  <div class="alert alert-blue">
+    หลังเปลี่ยน Spirit Walker Ascendancy → เป้าหมายหลักคือ Trusted Kinship (2 companions) + Inspiring Ally + Easy Going แล้วค่อยขยายไป Giant's Blood / Commanding Rage
+  </div>
+
+  <h2>Priority 1 — Trusted Kinship + Companion Scaling (ทำก่อน)</h2>
+  <div class="node-list">
+    <div class="node-item">
+      <div class="node-icon ni-keystone">K</div>
+      <div>
+        <div class="ni-name">Trusted Kinship ⭐ สำคัญที่สุด</div>
+        <div class="ni-stat" style="color:var(--purple);">You can have TWO Companions of different types (Bear + Beast พร้อมกัน!)</div>
+        <div class="ni-stat">30% more Reservation Efficiency — Companion Skills</div>
+        <div class="ni-stat" style="color:var(--red);">20% less Reservation Efficiency — non-Companion Skills</div>
+        <div class="ni-note">Keystone นี้ทำให้มี Bear + Beast companion พร้อมกันได้ — ไม่มีนี้ = ใช้ได้แค่ตัวเดียว</div>
+      </div>
+      <div class="hop-badge">17 hops</div>
+    </div>
+    <div class="node-item">
+      <div class="node-icon ni-notable">N</div>
+      <div>
+        <div class="ni-name">Inspiring Ally</div>
+        <div class="ni-stat">Increases and Reductions to Companion Damage also apply to you</div>
+        <div class="ni-note">ทุก %companion damage ที่เก็บ → ผู้เล่นได้ด้วย — synergy กับ Catha's Balance มาก</div>
+      </div>
+      <div class="hop-badge">22 hops</div>
+    </div>
+    <div class="node-item">
+      <div class="node-icon ni-small" style="background:rgba(224,120,78,.15);border-color:#e07a4e;color:#e07a4e;">⚠</div>
+      <div>
+        <div class="ni-name">Lifelong Friend — ข้าม (ไม่ proc)</div>
+        <div class="ni-stat">Minions Revive 35% faster if all Minions are Companions</div>
+        <div class="ni-note">Build มี Skeletal Snipers + Raging Spirits + Wolf Pack ซึ่งไม่ใช่ Companion → condition ไม่เคย true — ถ้าผ่าน path ก็เก็บได้ แต่ไม่ใช่เป้า</div>
+      </div>
+    </div>
+    <div class="node-item">
+      <div class="node-icon ni-notable">N</div>
+      <div>
+        <div class="ni-name">Easy Going</div>
+        <div class="ni-stat">25% increased Reservation Efficiency of Companion Skills</div>
+        <div class="ni-note">รวมกับ Trusted Kinship (+30%) = Companion Skills ใช้ Spirit น้อยมาก</div>
+      </div>
+      <div class="hop-badge">24 hops</div>
+    </div>
+    <div class="node-item">
+      <div class="node-icon ni-small">S</div>
+      <div>
+        <div class="ni-name">Companion Damage (small nodes บน path)</div>
+        <div class="ni-stat">Companions deal 12% increased Damage (×4 nodes)</div>
+        <div class="ni-note">อยู่บน path ไป Inspiring Ally / Easy Going — เก็บหมด</div>
+      </div>
+    </div>
+    <div class="node-item">
+      <div class="node-icon ni-small">S</div>
+      <div>
+        <div class="ni-name">Companion Reservation (small)</div>
+        <div class="ni-stat">8% increased Reservation Efficiency of Companion Skills</div>
+        <div class="ni-note">บน path ไป Easy Going</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Priority 2 — Sturdy Ally + Companion Extend</h2>
+  <div class="node-list">
+    <div class="node-item">
+      <div class="node-icon ni-notable">N</div>
+      <div>
+        <div class="ni-name">Sturdy Ally</div>
+        <div class="ni-stat">Companions gain your Strength | +15 to Strength</div>
+        <div class="ni-note">Catha's Balance scale จาก Weapon damage → Sturdy Ally ทำให้ Bear/Beast ได้ STR ของเรา = แรงตาม STR ที่สะสม</div>
+      </div>
+      <div class="hop-badge">20 hops</div>
+    </div>
+    <div class="node-item">
+      <div class="node-icon ni-small">S</div>
+      <div>
+        <div class="ni-name">Damage and Companion Damage (small)</div>
+        <div class="ni-stat">Companions deal 12% increased Damage | 10% increased Damage while companion in Presence</div>
+        <div class="ni-note">บน path ไป Sturdy Ally — เก็บตามทาง</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Priority 3 — Giant's Blood (หลัง LVL 65+)</h2>
+  <div class="node-list">
+    <div class="node-item">
+      <div class="node-icon ni-keystone">K</div>
+      <div>
+        <div class="ni-name">Giant's Blood ⭐ Core Build Mechanic</div>
+        <div class="ni-stat">You can wield Two-Handed Maces in one hand</div>
+        <div class="ni-stat" style="color:var(--red);">Triple Attribute requirements of Martial Weapons</div>
+        <div class="ni-stat" style="color:var(--red);">Inherent Life from Strength is halved</div>
+        <div class="ni-note">ถือ 2H Mace + Sceptre พร้อมกัน — ต้องมี STR สูงมากก่อน (triple req)</div>
+      </div>
+      <div class="hop-badge">19 hops</div>
+    </div>
+  </div>
+
+  <h2>Priority 4 — Minion/Rage Cluster (Endgame)</h2>
+  <div class="node-list">
+    <div class="node-item">
+      <div class="node-icon ni-notable">N</div>
+      <div>
+        <div class="ni-name">Commanding Rage — Endgame Only</div>
+        <div class="ni-stat" style="color:var(--green);">Every 5 Rage → 2% increased Minion Attack Speed (BUFF 0.5!)</div>
+        <div class="ni-stat">Every Rage → 1% increased Minion Damage</div>
+        <div class="ni-note">ต้องการ Rage จาก <b>Eternal Rage skill</b> เท่านั้น — Rage III support บน Raging Spirits ให้ Rage กับ Spirits ไม่ใช่ player ก่อนมี Eternal Rage = 0 effect</div>
+      </div>
+      <div class="hop-badge">18 hops</div>
+    </div>
+    <div class="node-item">
+      <div class="node-icon ni-notable">N</div>
+      <div>
+        <div class="ni-name">Gigantic Following</div>
+        <div class="ni-stat">Your Minions are Gigantic</div>
+        <div class="ni-stat" style="color:var(--red);">25% reduced Reservation Efficiency of Minion Skills</div>
+        <div class="ni-note">ทำให้ Minion ใหญ่ขึ้น — ถ้าไม่ได้จาก Amulet enchant ก็เก็บที่นี่แทน (แต่ Spirit แพง)</div>
+      </div>
+      <div class="hop-badge">22 hops</div>
+    </div>
+    <div class="node-item">
+      <div class="node-icon ni-small">S</div>
+      <div>
+        <div class="ni-name">Attack and Minion Damage (small ×2)</div>
+        <div class="ni-stat">8% increased Attack Damage | Minions deal 8% increased Damage</div>
+        <div class="ni-note">บน path ไป Commanding Rage — เก็บตามทาง</div>
+      </div>
+    </div>
+    <div class="node-item">
+      <div class="node-icon ni-small">S</div>
+      <div>
+        <div class="ni-name">Minion Damage and Life (small ×4)</div>
+        <div class="ni-stat">Minions +6% max Life | Minions deal +6% increased Damage</div>
+        <div class="ni-note">บน path ไป Gigantic Following</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-purple" style="margin-top:16px;">
+    <h3 style="margin-top:0;">Post-Ascendancy Priority Summary</h3>
+    <table>
+      <thead><tr><th>ลำดับ</th><th>Node</th><th>Effect สำคัญ</th><th>Hop</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><span class="tag tag-k">Trusted Kinship</span></td><td>2 companions พร้อมกัน + 30% efficiency</td><td>17</td></tr>
+        <tr><td>2</td><td><span class="tag tag-n">Inspiring Ally</span></td><td>Companion dmg → ผู้เล่นด้วย</td><td>22</td></tr>
+        <tr><td>3</td><td><span class="tag tag-n">Easy Going</span></td><td>+25% companion skill efficiency</td><td>24</td></tr>
+        <tr><td>4</td><td><span class="tag tag-n">Sturdy Ally</span></td><td>Companions gain your STR</td><td>20</td></tr>
+        <tr><td>5</td><td><span class="tag tag-k">Giant's Blood</span></td><td>2H Mace + Sceptre dual wield</td><td>19</td></tr>
+        <tr><td>6</td><td><span class="tag tag-n">Commanding Rage</span></td><td>Minion AS/Dmg per Rage — ต้องมี Eternal Rage ก่อน</td><td>18</td></tr>
+        <tr><td>7</td><td><span class="tag tag-n">Gigantic Following</span></td><td>Gigantic Minions (ถ้าไม่ได้จาก Amulet)</td><td>22</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- =================== ASCENDANCY TAB =================== -->
+<div id="tab-asc" class="tab-content">
+<div class="container">
+  <div class="alert alert-green">
+    Spirit Walker มี 4 picks — ลำดับสำคัญมาก: Bear ก่อน → Catha's Balance → Idolatry → Natural Order
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h2>Ascendancy Path แนะนำ</h2>
+      <div class="node-list">
+        <div class="node-item">
+          <div class="node-icon" style="background:rgba(224,85,85,.2);border:2px solid var(--red);color:var(--red);">A1</div>
+          <div>
+            <div class="ni-name">Wild Protector — Azmerian Bear</div>
+            <div class="ni-stat">Grants Skill: Wild Protector (Bear companion)</div>
+            <div class="ni-note">เลือกก่อนเสมอ — Bear ขยาย Catha's Balance ได้ทันที + ช่วย campaign</div>
+          </div>
+        </div>
+        <div class="node-item">
+          <div class="node-icon" style="background:rgba(224,85,85,.2);border:2px solid var(--red);color:var(--red);">A2</div>
+          <div>
+            <div class="ni-name">The Catha's Balance — Core DPS</div>
+            <div class="ni-stat">Companions gain added Attack damage = 60% of main hand Weapon damage</div>
+            <div class="ni-note">Core mechanic — ยิ่ง Mace Phys damage สูง = Bear + Beast แรงตาม</div>
+          </div>
+        </div>
+        <div class="node-item">
+          <div class="node-icon" style="background:rgba(78,203,113,.2);border:2px solid var(--green);color:var(--green);">A3</div>
+          <div>
+            <div class="ni-name">Idolatry — Idol Stacking ⭐ แนะนำ</div>
+            <div class="ni-stat" style="color:var(--green);">Companions +10% increased damage per Idol in Equipment</div>
+            <div class="ni-stat" style="color:var(--green);">+2% Reservation Efficiency per Idol</div>
+            <div class="ni-stat" style="color:var(--red);">-4% all Elemental Resistances per non-Idol Augment ⚠️</div>
+            <div class="ni-note">ต้อง fill Idol slots ให้ครบ — ถ้า 8 Idols = +80% companion dmg ฟรี!</div>
+          </div>
+        </div>
+        <div class="node-item">
+          <div class="node-icon" style="background:rgba(78,203,113,.2);border:2px solid var(--green);color:var(--green);">A4</div>
+          <div>
+            <div class="ni-name">The Natural Order — Unique Beast</div>
+            <div class="ni-stat">Tame Beast can capture Unique Beasts</div>
+            <div class="ni-stat">Can have up to 1 Unique Beast summoned</div>
+            <div class="ni-stat">Unique Beasts +30% move speed + possessed by Azmeri Spirits (เปลี่ยนทุก 20 วินาที)</div>
+            <div class="ni-note">สำคัญมาก — ใช้กับ Mighty Silverfist (S-tier, 463% dmg) หรือ Morvak (500% dmg)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h2>Full Ascendancy Node List (9 nodes)</h2>
+      <table>
+        <thead><tr><th>Node</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr style="background:rgba(224,85,85,.05);">
+            <td><strong style="color:var(--red);">Wild Protector</strong></td>
+            <td>Grants Skill: Wild Protector (Bear)</td>
+          </tr>
+          <tr style="background:rgba(224,85,85,.05);">
+            <td><strong style="color:var(--red);">The Catha's Balance</strong></td>
+            <td>Companions +60% weapon damage (main hand)</td>
+          </tr>
+          <tr style="background:rgba(78,203,113,.05);">
+            <td><strong style="color:var(--green);">Idolatry</strong></td>
+            <td>+10% companion dmg/Idol | +2% efficiency/Idol | -4% resists/non-Idol</td>
+          </tr>
+          <tr style="background:rgba(78,203,113,.05);">
+            <td><strong style="color:var(--green);">The Natural Order</strong></td>
+            <td>Tame Unique Beasts | +30% MS | Azmeri possession (20s)</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--muted);">Vivid Stampede</strong></td>
+            <td>เดิน 10m = +1 Wisp (max 3) → Attack = Stag stampede</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--muted);">The Mórrigan's Guidance</strong></td>
+            <td>+1 Wisp after Stampede | Stags +20% dmg/Shock per leap</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--muted);">Primal Bounty</strong></td>
+            <td>Owl Feather ทุก 4s | Dodge expend → empower projectiles</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--muted);">The Mhacha's Gift</strong></td>
+            <td>Dodge expend 3 Feathers | +100% empower/feather | +50% feather speed</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--muted);">Sacred Unity</strong></td>
+            <td>Keystone รวม Bear+Stag+Owl — ต้องมีทั้ง 3 path ก่อน (ไม่ viable build นี้)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="card card-yellow" style="margin-top:12px;">
+        <h3 style="margin-top:0;">Minor Ascendancy Nodes (passthrough)</h3>
+        <table style="font-size:12px;">
+          <thead><tr><th>Node</th><th>Stats</th></tr></thead>
+          <tbody>
+            <tr><td>Companion Life and Area ×2</td><td>+10% AoE | +15% Companion max Life</td></tr>
+            <tr><td>Shared Companion Damage ×2</td><td>+10% Companion dmg | +10% dmg while in Presence</td></tr>
+            <tr><td>Spirit ×2</td><td>+10 Spirit (each)</td></tr>
+            <tr><td>Critical Chance ×2</td><td>+12% Critical Hit Chance (each)</td></tr>
+            <tr><td>Movement Speed ×2</td><td>+2% Move Speed (each)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-blue" style="margin-top:12px;">
+    <h3 style="margin-top:0;">A3 Choice: Idolatry vs Vivid Stampede</h3>
+    <table>
+      <thead><tr><th></th><th>Idolatry (แนะนำ)</th><th>Vivid Stampede (สำรอง)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>เมื่อเลือก</strong></td><td>ถ้า fill Idol slots ได้ 6+ ชิ้น</td><td>ถ้าหา Idol gear ยาก / ไม่มีเวลา invest</td></tr>
+        <tr><td><strong>Upside</strong></td><td>+60-100%+ companion dmg (passive)</td><td>Stag stampede อัตโนมัติ ไม่ต้องกด</td></tr>
+        <tr><td><strong>Downside</strong></td><td>-4% all resists per non-Idol augment (ต้อง full Idol)</td><td>weaker scaling กว่า</td></tr>
+        <tr><td><strong>ต้น league</strong></td><td>ยาก (Idol gear หายาก + แพง)</td><td>ง่ายกว่า ปรับได้ทันที</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- =================== VISUAL MAP TAB =================== -->
+<div id="tab-map" class="tab-content">
+<div class="container">
+  <div class="alert alert-blue">
+    แผนผังแสดง approximate position ของ key nodes บน passive tree (ไม่ใช่ layout จริง 100%) — hover เพื่อดู stats
+  </div>
+  <div class="tree-wrap">
+    <svg id="tree-svg" class="tree-svg" viewBox="0 0 1060 680" width="1060" height="680">
+      <defs>
+        <marker id="arr-green" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <circle cx="4" cy="4" r="2" fill="#4ecb71" opacity=".7"/>
+        </marker>
+        <marker id="arr-purple" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <circle cx="4" cy="4" r="2" fill="#a07fe0" opacity=".7"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <div class="two-col" style="margin-top:16px;">
+    <div class="card card-green">
+      <h3 style="margin-top:0;color:var(--green);">Legend — Campaign (ก่อน Ascendancy)</h3>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px;">
+        <span>🟢 Notable</span>
+        <span>🔵 Path node</span>
+        <span>⚪ Small node</span>
+      </div>
+    </div>
+    <div class="card card-purple">
+      <h3 style="margin-top:0;color:var(--purple);">Legend — Post Spirit Walker</h3>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px;">
+        <span>🟣 Notable</span>
+        <span>🟡 Keystone</span>
+        <span>⚪ Small node</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div style="background:var(--surface);border-top:1px solid var(--border);padding:12px;text-align:center;color:var(--muted);font-size:12px;margin-top:24px;">
+  Spirit Walker Passive Guide | Runes of Aldur 0.5 | ข้อมูลจาก passive tree จริง 5,102 nodes | อัปเดต: 2026-05-27
+</div>
+
+<script>
+function showTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ===== VISUAL TREE DATA (from actual passive tree) =====
+const NODES = {
+  // Key: [label, x_tree, y_tree, kind, stats, phase]
+  // phase: 'start', 'campaign', 'post', 'both'
+  'start':    { label: 'Huntress\nStart', x: 1275, y: 736, kind: 'classstart', stats: ['จุดเริ่มต้น Huntress / Ranger'], phase: 'start' },
+  'sic_em':   { label: "Sic 'Em", x: 3396, y: 6375, kind: 'notable', stats: ['Companions +60% damage vs Immobilised enemies'], phase: 'campaign' },
+  'nourish':  { label: 'Nourishing\nAlly', x: 3396, y: 6863, kind: 'notable', stats: ['Companions +20% max Life', '20% increased Life Recovery Rate while companion in Presence'], phase: 'campaign' },
+  'unspoken': { label: 'Unspoken\nBond', x: 8396, y: 5904, kind: 'notable', stats: ['Companions +30% Chaos Res', 'Companions +30% all Elemental Res'], phase: 'campaign' },
+  'nurture':  { label: 'Nurturing\nGuardian', x: 8114, y: 5746, kind: 'notable', stats: ['Flask Life Recovery also applies to Companions'], phase: 'campaign' },
+  'trusted':  { label: 'Trusted\nKinship', x: 9856, y: 3275, kind: 'keystone', stats: ['You can have TWO Companions of different types', '30% more Companion Skill Efficiency', '20% less non-Companion Skill Efficiency'], phase: 'post' },
+  'inspire':  { label: 'Inspiring\nAlly', x: 12070, y: 2130, kind: 'notable', stats: ['Increases to Companion Damage also apply to you'], phase: 'post' },
+  'easygo':   { label: 'Easy\nGoing', x: 12638, y: 2424, kind: 'notable', stats: ['25% increased Reservation Efficiency of Companion Skills'], phase: 'post' },
+  'lifelong': { label: 'Lifelong\nFriend', x: 12484, y: 2765, kind: 'notable', stats: ['Minions Revive 35% faster if all are Companions'], phase: 'post' },
+  'sturdy':   { label: 'Sturdy\nAlly', x: 4249, y: 9803, kind: 'notable', stats: ['Companions gain your Strength', '+15 to Strength'], phase: 'post' },
+  'giants':   { label: "Giant's\nBlood", x: -8206, y: 7089, kind: 'keystone', stats: ['Wield 2H Maces in one hand', 'Triple Attribute requirements', 'Inherent Life from STR halved'], phase: 'post' },
+  'cmdrrage': { label: 'Commanding\nRage', x: -7912, y: -604, kind: 'notable', stats: ['Every 5 Rage → 2% Minion Attack Speed (BUFF 0.5)', 'Every Rage → 1% Minion Damage'], phase: 'post' },
+  'gigantic': { label: 'Gigantic\nFollowing', x: -2362, y: -9378, kind: 'notable', stats: ['Your Minions are Gigantic', '25% reduced Minion Skill Efficiency (cost)'], phase: 'post' },
+};
+
+const EDGES_CAMPAIGN = [['start','sic_em'],['sic_em','nourish'],['start','unspoken'],['unspoken','nurture']];
+const EDGES_POST = [['trusted','inspire'],['inspire','easygo'],['inspire','lifelong'],['nourish','sturdy'],['trusted','giants'],['cmdrrage','giants'],['start','cmdrrage'],['gigantic','cmdrrage']];
+const EDGES_CHAIN = [['start','trusted'],['start','trusted']];
+
+// Normalize coordinates
+const all_x = Object.values(NODES).map(n => n.x);
+const all_y = Object.values(NODES).map(n => n.y);
+const min_x = Math.min(...all_x), max_x = Math.max(...all_x);
+const min_y = Math.min(...all_y), max_y = Math.max(...all_y);
+
+const SVG_W = 1040, SVG_H = 660, PAD = 60;
+function tx(x) { return PAD + (x - min_x) / (max_x - min_x) * (SVG_W - PAD*2); }
+function ty(y) { return PAD + (y - min_y) / (max_y - min_y) * (SVG_H - PAD*2); }
+
+const svg = document.getElementById('tree-svg');
+const tooltip = document.getElementById('tooltip');
+
+function nodeColor(phase, kind) {
+  if (phase === 'start') return { fill: '#1e3a1e', stroke: '#4ecb71' };
+  if (kind === 'keystone') return { fill: '#2a1e10', stroke: '#e0b84e' };
+  if (phase === 'campaign') return { fill: '#1a2e1a', stroke: '#4ecb71' };
+  return { fill: '#1a1a2e', stroke: '#a07fe0' };
+}
+
+// Draw edges first
+function drawEdge(a, b, color) {
+  const na = NODES[a], nb = NODES[b];
+  if (!na || !nb) return;
+  const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  line.setAttribute('x1', tx(na.x)); line.setAttribute('y1', ty(na.y));
+  line.setAttribute('x2', tx(nb.x)); line.setAttribute('y2', ty(nb.y));
+  line.setAttribute('stroke', color); line.setAttribute('stroke-opacity', '0.4');
+  line.setAttribute('stroke-width', '1.5'); line.setAttribute('stroke-dasharray', '4,3');
+  svg.appendChild(line);
+}
+
+EDGES_CAMPAIGN.forEach(([a,b]) => drawEdge(a, b, '#4ecb71'));
+EDGES_POST.forEach(([a,b]) => drawEdge(a, b, '#a07fe0'));
+EDGES_CHAIN.forEach(([a,b]) => drawEdge(a, b, '#4e9fe0'));
+
+// Draw nodes
+Object.entries(NODES).forEach(([id, node]) => {
+  const cx = tx(node.x), cy = ty(node.y);
+  const { fill, stroke } = nodeColor(node.phase, node.kind);
+  const r = node.kind === 'keystone' ? 26 : node.kind === 'classstart' ? 22 : 19;
+
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.style.cursor = 'pointer';
+
+  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  circle.setAttribute('cx', cx); circle.setAttribute('cy', cy); circle.setAttribute('r', r);
+  circle.setAttribute('fill', fill); circle.setAttribute('stroke', stroke); circle.setAttribute('stroke-width', node.kind === 'keystone' ? '3' : '2');
+  g.appendChild(circle);
+
+  const lines = node.label.split('\n');
+  lines.forEach((line, i) => {
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', cx); text.setAttribute('y', cy + (i - (lines.length-1)/2) * 11);
+    text.setAttribute('text-anchor', 'middle'); text.setAttribute('dominant-baseline', 'middle');
+    text.setAttribute('font-size', '9'); text.setAttribute('fill', '#e0e0e8');
+    text.setAttribute('pointer-events', 'none');
+    text.textContent = line;
+    g.appendChild(text);
+  });
+
+  g.addEventListener('mouseenter', (e) => {
+    tooltip.style.display = 'block';
+    document.getElementById('tt-name').textContent = node.label.replace('\n', ' ');
+    document.getElementById('tt-kind').textContent = node.kind.toUpperCase() + ' — ' + (node.phase === 'campaign' ? 'Campaign' : node.phase === 'post' ? 'Post-Ascendancy' : 'Start');
+    document.getElementById('tt-stats').innerHTML = node.stats.map(s => `<div class="tt-stat">• ${s}</div>`).join('');
+    positionTooltip(e);
+  });
+  g.addEventListener('mousemove', positionTooltip);
+  g.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+
+  svg.appendChild(g);
+});
+
+function positionTooltip(e) {
+  const tw = tooltip.offsetWidth, th = tooltip.offsetHeight;
+  let left = e.clientX + 14, top = e.clientY - 10;
+  if (left + tw > window.innerWidth - 10) left = e.clientX - tw - 14;
+  if (top + th > window.innerHeight - 10) top = window.innerHeight - th - 10;
+  tooltip.style.left = left + 'px';
+  tooltip.style.top = top + 'px';
+}
+</script>
+</body>
+</html>

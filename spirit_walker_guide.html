@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spirit Walker Summoner — Runes of Aldur 0.5</title>
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #16161a;
+    --surface2: #1e1e24;
+    --border: #2a2a35;
+    --text: #e0e0e8;
+    --muted: #8888aa;
+    --green: #4ecb71;
+    --red: #e05555;
+    --yellow: #e0b84e;
+    --blue: #4e9fe0;
+    --purple: #a07fe0;
+    --orange: #e07a4e;
+    --teal: #4ecbc0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.6; }
+
+  .header {
+    background: linear-gradient(135deg, #1a0d2e 0%, #0d1a2e 50%, #0d2e1a 100%);
+    border-bottom: 2px solid var(--purple);
+    padding: 32px 24px 24px;
+    text-align: center;
+  }
+  .header h1 { font-size: 28px; color: var(--purple); margin-bottom: 8px; }
+  .header .subtitle { color: var(--muted); font-size: 14px; margin-bottom: 16px; }
+  .badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+  .badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .badge-s { background: rgba(78,203,113,0.15); border: 1px solid var(--green); color: var(--green); }
+  .badge-warn { background: rgba(224,85,85,0.15); border: 1px solid var(--red); color: var(--red); }
+  .badge-info { background: rgba(78,159,224,0.15); border: 1px solid var(--blue); color: var(--blue); }
+  .badge-purple { background: rgba(160,127,224,0.15); border: 1px solid var(--purple); color: var(--purple); }
+
+  nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 16px; display: flex; gap: 4px; overflow-x: auto; }
+  nav a { color: var(--muted); text-decoration: none; padding: 12px 16px; font-size: 13px; white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.2s; }
+  nav a:hover { color: var(--text); border-bottom-color: var(--purple); }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+
+  section { margin-bottom: 32px; }
+  h2 { font-size: 18px; color: var(--purple); border-left: 3px solid var(--purple); padding-left: 12px; margin-bottom: 16px; }
+  h3 { font-size: 15px; color: var(--yellow); margin-bottom: 10px; margin-top: 16px; }
+  h4 { font-size: 13px; color: var(--teal); margin-bottom: 6px; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+  .card-red { border-left: 3px solid var(--red); }
+  .card-green { border-left: 3px solid var(--green); }
+  .card-yellow { border-left: 3px solid var(--yellow); }
+  .card-purple { border-left: 3px solid var(--purple); }
+  .card-blue { border-left: 3px solid var(--blue); }
+
+  .step-grid { display: grid; gap: 10px; }
+  .step { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; display: flex; gap: 14px; }
+  .step-num { min-width: 32px; height: 32px; background: var(--purple); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+  .step-num.mandatory { background: var(--red); }
+  .step-num.upgrade { background: var(--green); }
+  .step-content { flex: 1; }
+  .step-title { font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .step-desc { color: var(--muted); font-size: 13px; }
+
+  .gem-group { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 12px; }
+  .gem-header { background: var(--surface2); padding: 12px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
+  .gem-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .gem-icon.active { background: var(--purple); }
+  .gem-icon.fire { background: #2a0a0a; border: 1px solid var(--red); color: var(--red); font-size: 11px; }
+  .gem-icon.lightning { background: #0a1a2a; border: 1px solid var(--blue); color: var(--blue); font-size: 11px; }
+  .gem-name { font-weight: 600; flex: 1; }
+  .gem-level { font-size: 12px; color: var(--muted); }
+  .gem-body { padding: 12px 16px; }
+  .gem-supports { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .gem-tag { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 3px 8px; font-size: 12px; color: var(--muted); }
+  .gem-tag.key { border-color: var(--orange); color: var(--orange); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { background: var(--surface2); color: var(--purple); padding: 10px 12px; text-align: left; border-bottom: 2px solid var(--border); font-size: 13px; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .mod-list { display: flex; flex-direction: column; gap: 3px; }
+  .mod { font-size: 12px; }
+  .mod.tier1 { color: var(--green); }
+  .mod.tier2 { color: var(--yellow); }
+  .mod.warn { color: var(--red); }
+  .mod.note { color: var(--muted); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+  .alert { padding: 12px 16px; border-radius: 6px; margin-bottom: 12px; font-size: 14px; }
+  .alert-red { background: rgba(224,85,85,0.1); border: 1px solid rgba(224,85,85,0.3); color: var(--red); }
+  .alert-green { background: rgba(78,203,113,0.1); border: 1px solid rgba(78,203,113,0.3); color: var(--green); }
+  .alert-yellow { background: rgba(224,184,78,0.1); border: 1px solid rgba(224,184,78,0.3); color: var(--yellow); }
+  .alert-blue { background: rgba(78,159,224,0.1); border: 1px solid rgba(78,159,224,0.3); color: var(--blue); }
+
+  .install-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; font-family: monospace; font-size: 13px; color: var(--teal); position: relative; margin-bottom: 8px; }
+  .copy-btn { position: absolute; top: 10px; right: 10px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+  .copy-btn:hover { color: var(--text); border-color: var(--purple); }
+
+  .skill-flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: var(--surface2); border: 1px solid var(--border); padding: 12px 16px; border-radius: 8px; margin-bottom: 12px; }
+  .skill-bubble { background: var(--surface); border: 1px solid var(--purple); border-radius: 20px; padding: 4px 12px; font-size: 13px; color: var(--purple); font-weight: 600; }
+  .skill-bubble.support-b { border-color: var(--orange); color: var(--orange); }
+  .skill-bubble.trigger { border-color: var(--green); color: var(--green); }
+  .arrow { color: var(--muted); font-size: 16px; }
+
+  .priority-list { list-style: none; counter-reset: priority; }
+  .priority-list li { counter-increment: priority; display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
+  .priority-list li::before { content: counter(priority); min-width: 22px; height: 22px; background: var(--purple); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+  .pob-box { background: linear-gradient(135deg, rgba(160,127,224,0.1), rgba(78,203,113,0.05)); border: 1px solid var(--purple); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+  .pob-title { color: var(--purple); font-weight: 700; margin-bottom: 8px; font-size: 13px; }
+
+  code { background: var(--surface2); border: 1px solid var(--border); border-radius: 3px; padding: 1px 5px; font-size: 12px; color: var(--teal); font-family: monospace; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Spirit Walker Summoner</h1>
+  <div class="subtitle">Huntress → Spirit Walker | Runes of Aldur 0.5.0 | By: Heroxsolbadguy</div>
+  <div class="badges">
+    <span class="badge badge-purple">Spirit Walker (Ascendancy ใหม่)</span>
+    <span class="badge badge-s">Minion Summoner</span>
+    <span class="badge badge-warn">Nerf Risk: สูงมาก — ขาย items ก่อน D+7</span>
+    <span class="badge badge-info">Giants Blood — 2H Mace + Sceptre</span>
+  </div>
+</div>
+
+<nav>
+  <a href="#patch" style="color:var(--red);">Patch 0.5</a>
+  <a href="#overview">ภาพรวม</a>
+  <a href="#install">ติดตั้ง</a>
+  <a href="#campaign">Campaign</a>
+  <a href="#gems">Gems</a>
+  <a href="#gear">Gear</a>
+  <a href="#ascendancy">Ascendancy</a>
+  <a href="#trade">Trade Regex</a>
+  <a href="#crafting" style="color:var(--teal);">Crafting</a>
+  <a href="#bosses">Boss</a>
+  <a href="#endgame">Endgame</a>
+</nav>
+
+<div class="container">
+
+<!-- PATCH ANALYSIS -->
+<section id="patch">
+  <h2>Patch 0.5.0 — วิเคราะห์ผลกระทบต่อ Build</h2>
+
+  <div class="alert alert-green" style="font-size:15px;">
+    <strong>สรุป: Build ยังเล่นได้ปกติ — Core mechanics ไม่โดน nerf แม้แต่อย่างเดียว</strong>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h3 style="color:var(--green);">สิ่งที่ได้รับ Buff</h3>
+      <table style="font-size:13px;">
+        <tbody>
+          <tr>
+            <td><strong style="color:var(--green);">Tame Beast</strong></td>
+            <td>Summoned Beasts deal <strong>40–84% more damage</strong> (LVL 9–20)<br>
+            <span style="color:var(--muted);">Sun Clan Scavenger แรงขึ้นมาก — ไม่ต้องเปลี่ยน companion</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--green);">Armour base</strong></td>
+            <td>Armour เพิ่ม ~33% ที่ LVL 65<br>
+            <span style="color:var(--muted);">Build เราใช้ Armour (ไม่ใช่ ES) — defense ดีขึ้นฟรี</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--green);">2H Mace range</strong></td>
+            <td>Two-handed: 1.3 → <strong>1.5</strong><br>
+            <span style="color:var(--muted);">ตีศัตรูได้ไกลขึ้น — minion aggro range ดีขึ้น</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--green);">Command Skills</strong></td>
+            <td>Movement penalty 70% → <strong>50%</strong><br>
+            <span style="color:var(--muted);">Gas Arrow ใช้ง่ายขึ้น (Skeletal Sniper command skill)</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h3 style="color:var(--red);">สิ่งที่โดน Nerf / เปลี่ยนแปลง</h3>
+      <table style="font-size:13px;">
+        <tbody>
+          <tr>
+            <td><strong style="color:var(--red);">Primate Idol ⚠️</strong></td>
+            <td>ใน 0.4 (PoB): ใส่ใน Sceptre → Allies 30% damage ต่อชิ้น<br>
+            ใน 0.5: <strong>Primate Idol = Idol ใส่ใน Helmet</strong> → Minions +15% Max Life<br>
+            <span style="color:var(--red);">Sceptre ใน PoB ที่ใส่ Primate Idol x3 ทำไม่ได้อีกแล้ว!</span><br>
+            <span style="color:var(--muted);">แทนด้วย: ใช้ Rune ใหม่จาก Runes of Aldur league แทน</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--green);">Trusted Kinship ✅ Rework (Main Tree Keystone)</strong></td>
+            <td><span style="color:var(--green);">You can have TWO Companions of different types</span> — Bear + Beast พร้อมกัน!<br>
+            30% more Reservation Efficiency สำหรับ Companion Skills<br>
+            <strong style="color:var(--red);">แต่</strong> -20% Reservation Efficiency สำหรับ non-Companion Skills<br>
+            <span style="color:var(--green);">0.5 BUFF: เอา defensive penalty ออกแล้ว (เดิม: -30% player defenses) → ใช้ได้เลยไม่เจ็บตัว</span><br>
+            <span style="color:var(--muted);">Flame Wall + Eternal Rage ใช้ Spirit เพิ่ม 20% — ต้องหา Spirit เพิ่มหรือ drop 1 non-companion skill</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--yellow);">Idol limits</strong></td>
+            <td>Fox / Rabbit / Stag Idol จำกัด 1 ชิ้น<br>
+            <span style="color:var(--muted);">Endgame ItemSet 1 ใน PoB ใช้ Fox Idol x4 — ทำไม่ได้อีก<br>แต่เราใช้ Armour build (ItemSet 2) อยู่แล้ว — ไม่กระทบ</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--muted);">Dialla's Desire</strong></td>
+            <td>Quality effect 10% → <strong>5%</strong><br>
+            <span style="color:var(--muted);">Support ใน Berserk — nerf เล็กน้อยมาก</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card card-green" style="margin-top:16px;">
+    <h3 style="margin-top:0;">สิ่งที่ <u>ไม่โดนแตะ</u> เลย (ยืนยันจาก Patch Notes)</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+      <span class="gem-tag key">Skeletal Sniper ✓</span>
+      <span class="gem-tag key">Wolf Pack ✓</span>
+      <span class="gem-tag key">Raging Spirits ✓</span>
+      <span class="gem-tag key">Flame Wall ✓</span>
+      <span class="gem-tag key">Catha's Balance ✓</span>
+      <span class="gem-tag key">Giants Blood ✓</span>
+      <span class="gem-tag key">Chain III ✓</span>
+      <span class="gem-tag key">Heft ✓</span>
+      <span class="gem-tag key">Feeding Frenzy II ✓</span>
+      <span class="gem-tag key">Muster ✓</span>
+      <span class="gem-tag key">Brutality III ✓</span>
+      <span class="gem-tag key">Impale ✓</span>
+      <span class="gem-tag key">Lightning Attunement ✓</span>
+      <span class="gem-tag key">Fire Attunement ✓</span>
+      <span class="gem-tag key">Eternal Rage ✓</span>
+      <span class="gem-tag key">Berserk (skill) ✓</span>
+    </div>
+  </div>
+
+  <div class="card card-yellow" style="margin-top:12px;">
+    <h3 style="margin-top:0;">สิ่งที่ต้องปรับ (Action Required)</h3>
+    <ol class="priority-list">
+      <li>
+        <div><strong>Sceptre Rune — ต้องเปลี่ยนจาก Primate Idol เป็น Rune ของ 0.5</strong><br>
+        <span style="color:var(--muted);font-size:13px;">Primate Idol ใน 0.5 ใส่ใน Helmet ไม่ใช่ Sceptre — หา Rune ใหม่จาก Runes of Aldur mechanic ใส่แทน<br>
+        <strong style="color:var(--yellow);">Rune ที่น่าสนใจสำหรับ Sceptre: หา Rune ที่ให้ Minion Damage / Spirit / Allies damage</strong></span></div>
+      </li>
+      <li>
+        <div><strong>Spirit Management — Trusted Kinship penalty ต่อ non-Companion Skills</strong><br>
+        <span style="color:var(--muted);font-size:13px;">Flame Wall + Eternal Rage ใช้ Spirit มากขึ้น 20% — อาจต้องหา Spirit เพิ่ม หรือ drop skill ที่ไม่จำเป็น</span></div>
+      </li>
+      <li>
+        <div><strong>Primate Idol (ใหม่) — ใส่ใน Helmet แทน</strong><br>
+        <span style="color:var(--muted);font-size:13px;">Primate Idol ใน 0.5 ให้ Minions +15% Max Life เมื่อใส่ใน Helmet — ทำ Minions อยู่รอดได้นานขึ้น</span></div>
+      </li>
+    </ol>
+  </div>
+
+  <div class="alert alert-blue" style="margin-top:12px;">
+    <strong>ข้อสรุป:</strong> Build ยังใช้ได้เต็ม — เปลี่ยนแค่ Rune ใน Sceptre และ manage Spirit ให้ดีขึ้น<br>
+    Skills หลักทั้งหมด (Skeletal Sniper, Wolf Pack, Raging Spirits, Catha's Balance, Giants Blood) ไม่โดน nerf เลย<br>
+    Tame Beast buff ทำให้ Sun Clan Scavenger แรงขึ้น เป็นข่าวดี<br>
+    <span style="color:var(--green);">✅ Trusted Kinship rework (0.5 BUFF): เอา defensive penalty ออก — ใช้ได้เลยไม่เสีย defense<br>
+    ✅ 19 new Companion passives ใน main tree — passive route ดีขึ้น<br>
+    ✅ Commanding Rage BUFF: 2% Minion Attack Speed per 5 Rage (เดิม 1%)<br>
+    ✅ Idolatry node ใหม่: +10% Companion damage per Idol — แนะนำเป็น A3 pick</span>
+  </div>
+</section>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <h2>ภาพรวม Build</h2>
+
+  <div class="alert alert-red">
+    Nerf Risk สูงมาก — Ascendancy ใหม่ Spirit Walker มักโดน nerf เร็ว ขาย items ก่อนวันที่ 7 ของ league
+  </div>
+
+  <div class="pob-box">
+    <div class="pob-title">PoB Data (poe.ninja/poe2/pob/1b6db) | Forum: pathofexile.com/forum/view-thread/3931901</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;font-size:13px;">
+      <div><span style="color:var(--muted)">Minion DPS:</span> <strong style="color:var(--green)">223,383</strong></div>
+      <div><span style="color:var(--muted)">Minion Life:</span> <strong>12,739</strong></div>
+      <div><span style="color:var(--muted)">Spirit:</span> <strong>351 (15 free)</strong></div>
+      <div><span style="color:var(--muted)">Life:</span> <strong>1,569</strong></div>
+      <div><span style="color:var(--muted)">All Resist:</span> <strong style="color:var(--green)">75% cap</strong></div>
+      <div><span style="color:var(--muted)">Move Speed:</span> <strong>+10.2%</strong></div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card card-green">
+      <h3>Core Loop</h3>
+      <div class="skill-flow">
+        <span class="skill-bubble">Flame Wall</span>
+        <span class="arrow">+</span>
+        <span class="skill-bubble">Skeletal Sniper</span>
+        <span class="arrow">=</span>
+        <span class="skill-bubble trigger">กระสุนติดไฟ</span>
+      </div>
+      <div class="skill-flow">
+        <span class="skill-bubble">Raging Spirits</span>
+        <span class="arrow">=</span>
+        <span class="skill-bubble trigger">วิ่งชนอัตโนมัติ</span>
+      </div>
+      <div class="skill-flow">
+        <span class="skill-bubble">Wolf Pack</span>
+        <span class="arrow">=</span>
+        <span class="skill-bubble trigger">โอบล้อม bite</span>
+      </div>
+      <div class="skill-flow">
+        <span class="skill-bubble">Companion Beast</span>
+        <span class="arrow">=</span>
+        <span class="skill-bubble trigger">Haste Aura</span>
+      </div>
+    </div>
+    <div class="card card-purple">
+      <h3>ทำไมแรงใน 0.5</h3>
+      <ul style="list-style:none;padding:0;">
+        <li style="margin-bottom:8px;font-size:14px;"><strong>Catha's Balance</strong> — Companions ได้ 60% weapon damage จาก 2H Mace</li>
+        <li style="margin-bottom:8px;font-size:14px;"><strong>Giants Blood</strong> — ถือ 2H Mace + Sceptre พร้อมกัน</li>
+        <li style="margin-bottom:8px;font-size:14px;"><strong>Skeletal Snipers + Chain III</strong> — 1 กระสุนกระเด้งหา 4 ศัตรู</li>
+        <li style="margin-bottom:8px;font-size:14px;"><strong>Wolf Pack</strong> — Wolves scale จาก Mace damage</li>
+        <li style="font-size:14px;"><strong>Azmerian Bear</strong> — free companion จาก Ascendancy</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="alert alert-yellow">
+    PoB source นี้เป็น version 0.4 (ก่อน ES nerf) — Endgame ItemSet 1 ใช้ ES gear ซึ่งโดน nerf 50% ใน 0.5
+    ให้ใช้ Armour base + Giants Blood แทน (ItemSet 2 "Gear While Leveling" ใน PoB ยังใช้ได้)
+  </div>
+</section>
+
+<!-- INSTALL -->
+<section id="install">
+  <h2>วิธีติดตั้ง Build ในเกม</h2>
+  <div class="step-grid">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">Copy ไฟล์ .build เข้า Build Planner</div>
+        <div class="step-desc">คัดลอกไฟล์ <code>spirit_walker_summoner.build</code> ไปไว้ที่:</div>
+        <div class="install-box" style="margin-top:8px;">Documents\My Games\Path of Exile 2\BuildPlanner\<button class="copy-btn" onclick="navigator.clipboard.writeText('Documents\\My Games\\Path of Exile 2\\BuildPlanner\\')">Copy</button></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">เปิด Build Planner ในเกม</div>
+        <div class="step-desc">Menu → Build Planner → Import → เลือกไฟล์ → กด Import<br>
+        Build จะปรากฏพร้อมคำอธิบายทุก step ตาม level ของตัวละคร</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CAMPAIGN -->
+<section id="campaign">
+  <h2>Campaign Walkthrough</h2>
+
+  <div class="alert alert-blue">
+    หลักการ: อย่าหยุด farm ใน zone — rush ตรงสู่ goal แล้วค่อย clear ระหว่างทาง
+  </div>
+
+  <div class="step-grid">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">Clearfell Town — LVL 1: Unearth Spell</div>
+        <div class="step-desc">เริ่มเกม → เลือก <strong>Unearth</strong> เป็น Starter Skill<br>
+        Unearth ยก Bone Construct ขึ้นมา → ใช้ clear ต้นเกม</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num upgrade">2</div>
+      <div class="step-content">
+        <div class="step-title">Clearfell Town — ซื้อ Sceptre ทันที</div>
+        <div class="step-desc">ขาย loot ทั้งหมดตั้งแต่เริ่ม → ซื้อ Sceptre จาก Vendor<br>
+        มองหา: <span style="color:var(--green)">+# to Level of all Minion Skills</span></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num upgrade">3</div>
+      <div class="step-content">
+        <div class="step-title">Clearfell Abandon Camp — LVL 1: Skeletal Sniper</div>
+        <div class="step-desc">หยิบ <strong>Skeletal Sniper</strong> Gem (LVL 1) — MAIN skill ของ build<br>
+        ใส่ทันที ใช้ Unearth + Skeletal Sniper ร่วมกัน</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-title">The Mud Burrow — LVL 2: Skeletal Sniper</div>
+        <div class="step-desc">อัพ Skeletal Sniper เป็น LVL 2 | Vendor check: หา '+1 Minion' ทุก Town</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num upgrade">5</div>
+      <div class="step-content">
+        <div class="step-title">Clearfell Town (หลัง Mud Burrow) — Lightning Attunement Support</div>
+        <div class="step-desc">ได้ <strong>Lightning Attunement</strong> Support → ใส่ใน Skeletal Sniper<br>
+        Snipers ยิง Lightning → Shock ศัตรู → damage เพิ่ม</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num upgrade">6</div>
+      <div class="step-content">
+        <div class="step-title">The Grelwood — ฆ่า The Witch → Faster Attacks Support</div>
+        <div class="step-desc">ใส่เป็น Support #2 → Snipers ยิงเร็วขึ้น = DPS รวมสูงขึ้น</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">8</div>
+      <div class="step-content">
+        <div class="step-title">The Red Vale — Flame Wall (Optional แต่แนะนำ)</div>
+        <div class="step-desc">ถ้า Flame Wall Skill Gem ตกใน Red Vale → หยิบเลย<br>
+        วาง Flame Wall หน้า pack → Snipers ยิงผ่าน → กระสุนติดไฟ = extra damage</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num upgrade">9</div>
+      <div class="step-content">
+        <div class="step-title">The Red Vale — ฆ่า Rusted King → LVL 3: Skeletal Sniper</div>
+        <div class="step-desc">DPS จะเพิ่มขึ้นชัดเจนหลัง LVL 3</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num upgrade">10</div>
+      <div class="step-content">
+        <div class="step-title">The Grim Tangle — ฆ่า Shaman → Bleed Support</div>
+        <div class="step-desc">ใส่ Bleed Support ชั่วคราว (จะเปลี่ยนเป็น Chain III ที่ endgame)</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num upgrade">11</div>
+      <div class="step-content">
+        <div class="step-title">Ogham Village — ฆ่า Executioner → LVL 5: Skeletal Sniper</div>
+        <div class="step-desc">เตรียม <span style="color:var(--red)">Cold Resist 75%</span> ก่อน Act 1 Final Boss!</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num mandatory">M1</div>
+      <div class="step-content">
+        <div class="step-title">MANDATORY: Freythorn → LVL 4 Spirit Gem: Raging Spirits</div>
+        <div class="step-desc">ห้ามเดินต่อก่อนได้ Spirit Gem นี้<br>
+        Raging Spirits วิ่งชนอัตโนมัติ → clear speed เพิ่มขึ้นมาก<br>
+        Keth → Lost City → Freythorn → รับ Raging Spirits</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num mandatory">M2</div>
+      <div class="step-content">
+        <div class="step-title">MANDATORY: Trials of Sekhema → Azmerian Bear (Ascendancy)</div>
+        <div class="step-desc">ทำ Ascendancy Trial → เลือก <strong>Azmerian Bear</strong> ก่อน<br>
+        Bear มาฟรี scale จาก Catha's Balance → DPS เพิ่มมาก<br>
+        Support: Bleed III + Rage III + Feeding Frenzy II + Muster + Brutality III</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">13</div>
+      <div class="step-content">
+        <div class="step-title">Jungle Ruins — หา Sun Clan Scavenger Beast</div>
+        <div class="step-desc">PoB ใช้ <strong>Sun Clan Scavenger</strong> เป็น main companion<br>
+        มี Haste aura + Extra Physical Damage<br>
+        หลังได้ Tame Beast skill → จับ Sun Clan Scavenger ทันที</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num mandatory">M3</div>
+      <div class="step-content">
+        <div class="step-title">MANDATORY: Azar Bog → LVL 10 Spirit Gem: Wolf Pack</div>
+        <div class="step-desc">Step 14: Skip ทุก Optional Zone → Rush ตรงไป Azar Bog<br>
+        Wolf Pack = wolves โอบล้อม + bite<br>
+        หลังได้ Wolf Pack: Skip optional zone ทั้งหมด → ไป Jungle Ruins</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num mandatory">M4</div>
+      <div class="step-content">
+        <div class="step-title">MANDATORY: Chaos Temple → Catha's Balance (Ascendancy)</div>
+        <div class="step-desc">Ascendancy node สำคัญที่สุด:<br>
+        <strong>Companions ได้ 60% weapon damage จาก main hand</strong><br>
+        Mace damage สูง → ทุก Companion แรงตาม</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num upgrade">15</div>
+      <div class="step-content">
+        <div class="step-title">Giants Blood — เปิด Keystone หลังได้ Strength พอ</div>
+        <div class="step-desc">ใส่ Keystone <strong>Giants Blood</strong> เมื่อ Strength ≥ 3× requirement<br>
+        ถือ Two-Handed Mace (main) + Sceptre (off-hand)<br>
+        Sceptre ให้ +4 Minion Gem Level | Mace ให้ Physical Damage สูง</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num upgrade">16</div>
+      <div class="step-content">
+        <div class="step-title">Maps — เพิ่ม Endgame Skills</div>
+        <div class="step-desc">เพิ่ม Berserk + Eternal Rage → กดก่อน Boss fight<br>
+        เปลี่ยน Bleed → Chain III ใน Skeletal Sniper<br>
+        หา Unset Ring x2 (Grants 1 additional Skill Slot)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GEMS -->
+<section id="gems">
+  <h2>Gem Setup</h2>
+
+  <div class="alert alert-blue">
+    Uncut Gem ที่ได้มา → ใส่ Skeletal Sniper ก่อนเสมอ จนได้ level ที่ต้องการ แล้วค่อยอัพ skills อื่น
+  </div>
+
+  <h3>Main Skills</h3>
+
+  <div class="gem-group">
+    <div class="gem-header">
+      <div class="gem-icon active">S</div>
+      <div class="gem-name">Skeletal Sniper — MAIN MINION</div>
+      <div class="gem-level">LVL 1 → 20+ (อัพก่อนทุกอย่าง)</div>
+    </div>
+    <div class="gem-body">
+      <div style="color:var(--muted);font-size:13px;margin-bottom:8px;">
+        GemID: <code>Metadata/Items/Gems/SkillGemSkeletalSniper</code>
+      </div>
+      <div style="font-size:13px;font-weight:600;color:var(--teal);margin-bottom:6px;">Supports:</div>
+      <div class="gem-supports">
+        <span class="gem-tag key">Faster Attacks ⭐ (สำคัญสุด)</span>
+        <span class="gem-tag key">Heft</span>
+        <span class="gem-tag key">Chain III</span>
+        <span class="gem-tag">Muster</span>
+        <span class="gem-tag">Feeding Frenzy II</span>
+      </div>
+      <div style="font-size:12px;color:var(--red);margin-top:6px;">⚠️ ไม่ใช้ Lightning Attunement แล้ว — Faster Attacks ดีกว่าสำหรับ build นี้</div>
+    </div>
+  </div>
+
+  <div class="gem-group">
+    <div class="gem-header">
+      <div class="gem-icon fire">F</div>
+      <div class="gem-name">Flame Wall — ยิงผ่าน = กระสุนติดไฟ</div>
+      <div class="gem-level">LVL 8+ (optional เริ่มต้น)</div>
+    </div>
+    <div class="gem-body">
+      <div style="color:var(--muted);font-size:13px;margin-bottom:8px;">
+        GemID: <code>Metadata/Items/Gems/SkillGemFlameWall</code>
+      </div>
+      <div class="gem-supports">
+        <span class="gem-tag key">Ignite ⭐</span>
+        <span class="gem-tag key">Efficiency II</span>
+        <span class="gem-tag">Deliberation</span>
+        <span class="gem-tag">Spell Cascade</span>
+      </div>
+      <div style="font-size:12px;color:var(--red);margin-top:6px;">⚠️ เปลี่ยนจาก Arcane Surge → Ignite</div>
+    </div>
+  </div>
+
+  <div class="gem-group">
+    <div class="gem-header">
+      <div class="gem-icon lightning">R</div>
+      <div class="gem-name">Raging Spirits — MANDATORY Upgrade #1</div>
+      <div class="gem-level">LVL 4 Spirit Gem (Freythorn)</div>
+    </div>
+    <div class="gem-body">
+      <div style="color:var(--muted);font-size:13px;margin-bottom:8px;">
+        GemID: <code>Metadata/Items/Gem/SkillGemRagingSpirits</code>
+      </div>
+      <div class="gem-supports">
+        <span class="gem-tag key">Rage ⭐ (ใส่ก่อน)</span>
+        <span class="gem-tag key">Fire Attunement</span>
+        <span class="gem-tag">Fire Penetration I</span>
+        <span class="gem-tag">Muster</span>
+        <span class="gem-tag">Feeding Frenzy II</span>
+      </div>
+      <div style="font-size:12px;color:var(--red);margin-top:6px;">⚠️ Rage ดีกว่า Duration — ใส่ตั้งแต่เริ่ม</div>
+    </div>
+  </div>
+
+  <div class="gem-group">
+    <div class="gem-header">
+      <div class="gem-icon active">W</div>
+      <div class="gem-name">Wolf Pack — MANDATORY Upgrade #3</div>
+      <div class="gem-level">LVL 10 Spirit Gem (Azar Bog)</div>
+    </div>
+    <div class="gem-body">
+      <div style="color:var(--muted);font-size:13px;margin-bottom:8px;">
+        GemID: <code>Metadata/Items/Gems/SkillGemWolfPack</code>
+      </div>
+      <div class="gem-supports">
+        <span class="gem-tag key">Brutality III ⭐</span>
+        <span class="gem-tag key">Impale ⭐</span>
+        <span class="gem-tag key">Bleed II</span>
+        <span class="gem-tag">Muster</span>
+        <span class="gem-tag">Feeding Frenzy II</span>
+      </div>
+      <div style="font-size:12px;color:var(--red);margin-top:6px;">⚠️ เปลี่ยนจาก Rage III → Bleed II</div>
+    </div>
+  </div>
+
+  <div class="gem-group">
+    <div class="gem-header">
+      <div class="gem-icon active">C</div>
+      <div class="gem-name">Companion Beast (Sun Clan Scavenger)</div>
+      <div class="gem-level">Gem Skill LVL 7+ (เร็วกว่าที่คิด!)</div>
+    </div>
+    <div class="gem-body">
+      <div style="color:var(--muted);font-size:13px;margin-bottom:8px;">
+        GemID: <code>Metadata/Items/Gems/SkillGemSummonBeast</code> | Beast: <code>Metadata/Monsters/HyenaMonster/HyenaCentaurSpear</code><br>
+        <strong style="color:var(--yellow);">Tame Beast ใช้ได้ตั้งแต่ Gem Skill Level 7 — จับได้เร็วกว่าที่คิด</strong>
+      </div>
+      <div class="gem-supports">
+        <span class="gem-tag key">Brutality III</span>
+        <span class="gem-tag">Heavy Swing</span>
+        <span class="gem-tag">Muster</span>
+        <span class="gem-tag">Feeding Frenzy II</span>
+        <span class="gem-tag">Rage III</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>หลังเปลี่ยนอาชีพ — Spirit Walker Skills (ใหม่ 0.5)</h3>
+
+  <div class="gem-group">
+    <div class="gem-header">
+      <div class="gem-icon active" style="background:var(--orange);">A</div>
+      <div class="gem-name">Azmerian Wolf — Companion ใหม่ (0.5)</div>
+      <div class="gem-level">หลัง Ascendancy Spirit Walker</div>
+    </div>
+    <div class="gem-body">
+      <div style="color:var(--muted);font-size:13px;margin-bottom:8px;">
+        หมาป่าโบราณ howl → spectral wolf pack โจมตี + Maim + Bleed<br>
+        <span style="color:var(--green);">Scale จาก Catha's Balance (60% weapon damage) — เหมือน Wolf Pack</span>
+      </div>
+      <div class="gem-supports">
+        <span class="gem-tag key">Brutality III ⭐</span>
+        <span class="gem-tag key">Impale ⭐</span>
+        <span class="gem-tag key">Bleed II</span>
+        <span class="gem-tag">Muster</span>
+        <span class="gem-tag">Feeding Frenzy II</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="gem-group">
+    <div class="gem-header">
+      <div class="gem-icon active" style="background:var(--teal);">B</div>
+      <div class="gem-name">Bind Spectre — หลังเปลี่ยนอาชีพ</div>
+      <div class="gem-level">LVL 20+</div>
+    </div>
+    <div class="gem-body">
+      <div style="color:var(--muted);font-size:13px;margin-bottom:8px;">
+        สร้าง Spectre จากศพศัตรู — เพิ่ม Minion count + DPS รวม<br>
+        <span style="color:var(--yellow);">เลือก Spectre ที่มี Physical / Fire damage หรือ Aura ช่วย Minions อื่น</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>Utility Skills (Endgame LVL 40+)</h3>
+  <div class="two-col">
+    <div class="gem-group">
+      <div class="gem-header">
+        <div class="gem-icon fire">B</div>
+        <div class="gem-name">Berserk</div>
+      </div>
+      <div class="gem-body">
+        <div style="font-size:13px;color:var(--muted);">
+          GemID: <code>Metadata/Items/Gem/SkillGemBerserk</code><br>
+          กดก่อน Boss → consume Rage → Minions deal more damage<br>
+          Support: Dialla's Desire + Uhtred's Omen
+        </div>
+      </div>
+    </div>
+    <div class="gem-group">
+      <div class="gem-header">
+        <div class="gem-icon fire">E</div>
+        <div class="gem-name">Eternal Rage</div>
+      </div>
+      <div class="gem-body">
+        <div style="font-size:13px;color:var(--muted);">
+          GemID: <code>Metadata/Items/Gems/SkillGemEternalRage</code><br>
+          Generate Rage ต่อเนื่อง — active อัตโนมัติ ไม่ต้องกด
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GEAR -->
+<section id="gear">
+  <h2>Gear Priority</h2>
+
+  <div class="alert alert-red">
+    ES gear โดน nerf 50% ใน 0.5 — ใช้ Armour base ทั้งหมด (PoB ItemSet 2)
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Slot</th>
+        <th>Base Type</th>
+        <th>Priority Mods</th>
+        <th>หมายเหตุ</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Weapon Main</strong><br><span style="color:var(--muted);font-size:12px;">หลัง Giants Blood</span></td>
+        <td>Two-Handed Mace</td>
+        <td>
+          <div class="mod-list">
+            <div class="mod tier1">% increased Physical Damage (สำคัญสุด)</div>
+            <div class="mod tier1">Adds X-Y Physical Damage</div>
+            <div class="mod note">PoB: 258% phys + Adds 55-94</div>
+          </div>
+        </td>
+        <td style="font-size:13px;">Catha's Balance scale จาก phys damage เช็ค Str req</td>
+      </tr>
+      <tr>
+        <td><strong>Weapon Off-hand</strong></td>
+        <td>Aromatic Sceptre</td>
+        <td>
+          <div class="mod-list">
+            <div class="mod tier1">+4 to Level of all Minion Skills (BIS)</div>
+            <div class="mod tier1">Allies in your Presence +119% damage</div>
+            <div class="mod tier2">+103% Spirit</div>
+            <div class="mod note">ใส่ Rune จาก Runes of Aldur League (0.5)</div>
+          </div>
+        </td>
+        <td style="font-size:13px;">Primate Idol ย้ายไป Helmet แล้วใน 0.5</td>
+      </tr>
+      <tr>
+        <td><strong>Helmet</strong></td>
+        <td>Armour base</td>
+        <td>
+          <div class="mod-list">
+            <div class="mod tier1">+2 to Level of all Minion Skills</div>
+            <div class="mod tier2">Life Regeneration/sec</div>
+          </div>
+        </td>
+        <td style="font-size:13px;">+2 Minion Level = Snipers ยิงแรงขึ้น</td>
+      </tr>
+      <tr>
+        <td><strong>Body Armour</strong></td>
+        <td>Warlord Cuirass</td>
+        <td>
+          <div class="mod-list">
+            <div class="mod tier1">+Spirit (PoB: +46)</div>
+            <div class="mod tier2">Strength + Chaos Res</div>
+            <div class="mod warn">ห้ามใช้ ES chest</div>
+          </div>
+        </td>
+        <td style="font-size:13px;">Spirit สำคัญสำหรับเรียก Wolf Pack + Bear + Raging Spirits พร้อมกัน</td>
+      </tr>
+      <tr>
+        <td><strong>Gloves</strong></td>
+        <td>Armour base</td>
+        <td>
+          <div class="mod-list">
+            <div class="mod tier1">Elemental Resistances (75% cap)</div>
+            <div class="mod tier2">Strength หรือ Life Regen</div>
+          </div>
+        </td>
+        <td style="font-size:13px;">ใช้ cap resist ให้ครบ</td>
+      </tr>
+      <tr>
+        <td><strong>Boots</strong></td>
+        <td>Armour base</td>
+        <td>
+          <div class="mod-list">
+            <div class="mod tier1">35% increased Movement Speed</div>
+            <div class="mod tier2">Chaos Resistance + Strength</div>
+          </div>
+        </td>
+        <td style="font-size:13px;">Move speed = minions ตามได้ทัน</td>
+      </tr>
+      <tr>
+        <td><strong>Ring — Act 1</strong><br><span style="color:var(--muted);font-size:12px;">LVL 1–25</span></td>
+        <td>Armour base</td>
+        <td>
+          <div class="mod-list">
+            <div class="mod tier1">Maximum Life (HP)</div>
+            <div class="mod tier1">Armour</div>
+            <div class="mod tier1">Cold Resistance 75%</div>
+          </div>
+        </td>
+        <td style="font-size:13px;color:var(--red);">Cold Resist 75% ก่อน Geonor!</td>
+      </tr>
+      <tr>
+        <td><strong>Ring — Act 2</strong><br><span style="color:var(--muted);font-size:12px;">LVL 25–40</span></td>
+        <td>Armour base</td>
+        <td>
+          <div class="mod-list">
+            <div class="mod tier1">Life Regeneration/sec (HP Regen)</div>
+            <div class="mod tier1">Armour</div>
+            <div class="mod tier1">Lightning Resistance 75%</div>
+          </div>
+        </td>
+        <td style="font-size:13px;color:var(--red);">Lightning Resist 75% ก่อน Jamanra!</td>
+      </tr>
+      <tr>
+        <td><strong>Ring x2 — Endgame</strong><br><span style="color:var(--muted);font-size:12px;">Maps+</span></td>
+        <td>Unset Ring (BIS)</td>
+        <td>
+          <div class="mod-list">
+            <div class="mod tier1">Grants 1 additional Skill Slot (implicit)</div>
+            <div class="mod tier2">Strength + All Elemental Resistances</div>
+          </div>
+        </td>
+        <td style="font-size:13px;">Unset Ring x2 = +2 skill slots เพิ่ม</td>
+      </tr>
+      <tr>
+        <td><strong>Amulet</strong></td>
+        <td>Gold Amulet (BIS)</td>
+        <td>
+          <div class="mod-list">
+            <div class="mod tier1">+3 to Level of all Minion Skills</div>
+            <div class="mod tier1">+40 to Spirit</div>
+            <div class="mod tier2">Enchant: Allocates Gigantic Following</div>
+            <div class="mod tier2">Strength + All Resistances</div>
+          </div>
+        </td>
+        <td style="font-size:13px;">Enchant "Gigantic Following" = ไม่ต้องเสีย passive point</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ASCENDANCY -->
+<section id="ascendancy">
+  <h2>Ascendancy — Spirit Walker</h2>
+
+  <div class="step-grid">
+    <div class="step">
+      <div class="step-num mandatory">A1</div>
+      <div class="step-content">
+        <div class="step-title">Azmerian Bear — เลือกก่อน (Trials of Sekhema)</div>
+        <div class="step-desc">Wild Protector: Summon Azmerian Bear companion — scale จาก weapon damage<br>
+        Support: Bleed III + Rage III + Feeding Frenzy II + Muster + Brutality III</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num mandatory">A2</div>
+      <div class="step-content">
+        <div class="step-title">Catha's Balance — สำคัญที่สุด (Chaos Temple)</div>
+        <div class="step-desc">Companions ได้ 60% weapon damage จาก main hand — core mechanic ของ build<br>
+        ยิ่ง Mace Physical Damage สูง → ทุก Companion แรงตาม</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">A3</div>
+      <div class="step-content">
+        <div class="step-title">Idolatry — Companion Damage Scaling ⭐ (แนะนำ 0.5)</div>
+        <div class="step-desc">
+          <span style="color:var(--green);">Companions +10% increased damage per Idol ในตัว</span><br>
+          <span style="color:var(--green);">+2% Reservation Efficiency of Skills per Idol</span><br>
+          <span style="color:var(--red);">⚠️ -4% all Elemental Resistances per non-Idol Augment</span> — ต้อง fill Idol slots ให้ครบ<br>
+          <span style="color:var(--muted);">แทน Vivid Stampede: Idol stack → Companion damage สูงกว่า Stag spirit passive</span>
+        </div>
+      </div>
+    </div>
+    <div class="step" style="border-left:3px solid var(--muted);">
+      <div class="step-num" style="background:var(--muted);">A3b</div>
+      <div class="step-content">
+        <div class="step-title">Vivid Stampede — ตัวเลือกสำรอง (ถ้าไม่ stack Idols)</div>
+        <div class="step-desc">เดิน 20m = +1 Vivid Wisp → โจมตีเมื่อ Wisp เต็ม 3 = Stag spirits พุ่งชน<br>
+        ทำงานอัตโนมัติ ไม่ต้องกด — ดีกว่าถ้าหา Idol gear ยาก</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">A4</div>
+      <div class="step-content">
+        <div class="step-title">The Natural Order — Tame Unique Boss Beasts</div>
+        <div class="step-desc">สามารถ Tame unique boss beasts ได้ + Unique Beasts +30% Move Speed<br>
+        Unique Tamed Beasts ถูก Possessed by random Azmeri Spirits → bonus modifier<br>
+        PoB ใช้: Mighty Silverfist (S-tier) หรือ Sun Clan Scavenger = 2 beast companions</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-yellow" style="margin-top:16px;">
+    <h3>Passive Tree Priority (อัปเดต 0.5)</h3>
+    <ol class="priority-list">
+      <li><strong>Minion Damage clusters</strong> ใกล้ starting area Huntress</li>
+      <li><strong>Giants Blood</strong> — dual wield 2H Mace + Sceptre (สำคัญมาก)</li>
+      <li><strong>Trusted Kinship</strong> (Keystone) — <span style="color:var(--green);">You can have TWO Companions of different types</span> (Bear + Beast พร้อมกัน!) + 30% more Efficiency สำหรับ Companion Skills, <span style="color:var(--red);">-20% สำหรับ non-Companion</span></li>
+      <li><strong style="color:var(--green);">Companion notables ใหม่ (0.5)</strong> — เก็บตัวที่ผ่านทาง: <em>Easy Going</em> (+25% Companion Skill eff), <em>Inspiring Ally</em> (Companion dmg apply to you), <em>Sturdy Ally</em> (Companions gain your STR), <em>Sic 'Em</em> (Companions +60% dmg vs Immobilised), <em>Captivating Companionship</em> (+20% Armour/Eva/ES while companion in Presence)</li>
+      <li><strong>Spirit Reservation Efficiency</strong> ถ้า Spirit ไม่พอหลัง Trusted Kinship</li>
+      <li><strong>Commanding Rage</strong> — <span style="color:var(--green);">BUFF 0.5: Every 5 Rage = 2% Minion Attack Speed</span> + Every Rage = 1% Minion Damage — เพิ่ม node นี้ถ้าผ่านทาง</li>
+      <li><strong>Gigantic Following</strong> ถ้าไม่ได้จาก Amulet enchant</li>
+    </ol>
+  </div>
+
+  <div class="card card-blue" style="margin-top:12px;">
+    <h3 style="margin-top:0;">Spirit Walker Ascendancy — Full Node List (0.5)</h3>
+    <table style="font-size:13px;">
+      <thead><tr><th>Node</th><th>Effect</th><th>Priority</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Wild Protector</strong></td><td>Summon Azmerian Bear companion</td><td style="color:var(--green);">A1 — CORE</td></tr>
+        <tr><td><strong>Catha's Balance</strong></td><td>Companions +60% weapon damage (main hand)</td><td style="color:var(--green);">A2 — CORE</td></tr>
+        <tr><td><strong>Idolatry</strong></td><td>+10% companion dmg per Idol, +2% Spirit eff per Idol, -4% resists per non-Idol</td><td style="color:var(--green);">A3 — แนะนำ</td></tr>
+        <tr><td><strong>The Natural Order</strong></td><td>Tame Unique Beasts, +30% move speed, Azmeri Spirit possession</td><td style="color:var(--green);">A4 — CORE</td></tr>
+        <tr><td><strong>Vivid Stampede</strong></td><td>เดิน <strong>10m</strong> = +1 Wisp (max 3) → โจมตี = Stag stampede<br><span style="color:var(--green);font-size:11px;">จริง: 10m ไม่ใช่ 20m — Wisp เต็มเร็วกว่าที่คาด</span></td><td style="color:var(--muted);">สำรอง (แทน Idolatry)</td></tr>
+        <tr><td><strong>The Morrigan's Guidance</strong></td><td>Stags +20% more damage/Shock per leap; +1 Wisp when Stampede ends</td><td style="color:var(--muted);">ถ้าเลือก Vivid Stampede</td></tr>
+        <tr><td><strong>Primal Bounty</strong></td><td>Owl Feathers → Dodge triggers empowered projectiles</td><td style="color:var(--muted);">ไม่เกี่ยวกับ minion build</td></tr>
+        <tr><td><strong>The Mhacha's Gift</strong></td><td>3x Feather dodge, +100% empower per feather, +50% feather gain</td><td style="color:var(--muted);">ไม่เกี่ยวกับ minion build</td></tr>
+        <tr><td><strong>Sacred Unity</strong></td><td>Keystone: รวม Bear + Stag + Owl path — ต้องมีทั้ง 3 path ก่อน</td><td style="color:var(--muted);">ไม่ viable (ต้อง 6 nodes)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- TRADE FILTER -->
+<section id="trade">
+  <h2>Damage Scaling Analysis + Item Guide ทุก Act</h2>
+
+  <!-- DAMAGE SCALING -->
+  <div class="card card-purple" style="margin-bottom:20px;">
+    <h3 style="margin-top:0;">วิเคราะห์ Damage Scaling ของ Build (จาก PoB)</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Build นี้มีแหล่ง damage 3 กลุ่ม — แต่ละกลุ่มอิง mod ต่างกัน ต้องเข้าใจก่อนจะซื้อของถูก</p>
+    <table>
+      <thead>
+        <tr><th>Minion</th><th>ธาตุ</th><th>Mod ที่ scale</th><th>อธิบาย</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong style="color:var(--blue);">Skeletal Sniper</strong></td>
+          <td>Physical → Lightning</td>
+          <td>
+            <div class="mod tier1">+Level of all Minion Skills ★★★</div>
+            <div class="mod tier2">Minion Damage %</div>
+            <div class="mod tier2">Lightning Damage to Attacks</div>
+          </td>
+          <td style="font-size:12px;color:var(--muted);">ทำ Phys projectile → Chain กระเด้ง 4 ครั้ง → Lightning Attunement แปลงเป็น Lightning → Shock<br><strong>+1 Level = ~12% DPS</strong></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--red);">Raging Spirits</strong></td>
+          <td>Fire</td>
+          <td>
+            <div class="mod tier1">+Level of all Minion Skills ★★★</div>
+            <div class="mod tier2">Minion Damage %</div>
+            <div class="mod tier2">Fire Damage to Spells</div>
+          </td>
+          <td style="font-size:12px;color:var(--muted);">วิ่งชนอัตโนมัติ → ระเบิด Fire<br>Fire Attunement + Fire Penetration</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--green);">Wolf Pack + Bear + Beast</strong></td>
+          <td>Physical</td>
+          <td>
+            <div class="mod tier1">% increased Physical Damage (weapon) ★★★</div>
+            <div class="mod tier1">Adds X-Y Physical Damage (weapon) ★★★</div>
+            <div class="mod tier2">Allies in Presence deal X% damage</div>
+          </td>
+          <td style="font-size:12px;color:var(--muted);"><strong>Catha's Balance = Companions ได้ 60% weapon damage</strong><br>ยิ่ง Mace Physical Damage สูง → Wolves + Bear + Scavenger แรงตาม<br>นี่คือ mod ที่ต้อง invest หลัง Giants Blood</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="background:rgba(160,127,224,0.1);border:1px solid var(--purple);border-radius:6px;padding:12px;margin-top:12px;font-size:13px;">
+      <strong style="color:var(--purple);">สรุป Priority Mod สำหรับ Build นี้:</strong><br>
+      <span style="color:var(--red);">1.</span> <strong>+Level of all Minion Skills</strong> — ส่งผลทุก Minion พร้อมกัน ซื้อทุกครั้งที่เจอไม่ว่าราคาเท่าไร<br>
+      <span style="color:var(--orange);">2.</span> <strong>% increased Physical Damage บน 2H Mace</strong> — หลัง Giants Blood นี่คือ investment หลัก<br>
+      <span style="color:var(--yellow);">3.</span> <strong>Spirit</strong> — เรียก Companions ได้มากขึ้น ต้องการ 300+ Spirit endgame<br>
+      <span style="color:var(--blue);">4.</span> <strong>Minion Damage %</strong> — scale ทุก Minion แต่น้อยกว่า +Level<br>
+      <span style="color:var(--muted);">5.</span> <strong>Allies in Presence deal X% damage</strong> — จาก Sceptre/Primate Idol Rune
+    </div>
+  </div>
+
+  <!-- ACT 1 -->
+  <div class="card card-green" style="margin-bottom:12px;">
+    <h3 style="margin-top:0;color:var(--green);">Act 1 — Hours 0-6 (LVL 1-25)</h3>
+    <div class="two-col">
+      <div>
+        <h4>Boss และ Damage Types (ข้อมูลจริง)</h4>
+        <table style="font-size:13px;">
+          <tbody>
+            <tr><td><strong>Draven, the Eternal Praetor</strong></td><td>Physical — กวาด projectile 180 องศา</td></tr>
+            <tr><td><strong>Lachlann of Endless Lament</strong></td><td><span style="color:var(--blue);">Cold</span> — Chilled Ground + spirit trails</td></tr>
+            <tr><td><strong>Count Geonor</strong> (Final Boss)</td><td><span style="color:var(--blue);">Cold เป็นหลัก</span> + Physical slash<br><strong style="color:var(--red);">Cold Resist 75% ก่อนเข้า! Life 350+ ขั้นต่ำ</strong></td></tr>
+            <tr><td>The Crowbell (Optional)</td><td>Physical ช้า — หลบได้ง่าย</td></tr>
+          </tbody>
+        </table>
+        <h4 style="margin-top:12px;">Slot Priority</h4>
+        <div class="mod-list">
+          <div class="mod tier1">Sceptre — +1 to Level of all Minion Skills</div>
+          <div class="mod tier1">Boots — Movement Speed 10%+</div>
+          <div class="mod tier2">Ring/Amulet — Cold Resistance ให้ได้ 75%</div>
+          <div class="mod tier2">ทุก Slot — Maximum Life</div>
+          <div class="mod note">ยังไม่ต้องคิดเรื่อง 2H Mace — ใช้ Sceptre เดียวก่อน</div>
+        </div>
+      </div>
+      <div>
+        <h4>Regex (Vendor ทุก Town)</h4>
+        <div class="install-box" style="padding-right:70px;word-break:break-all;font-size:12px;">10% i.+mov|^\+.*ion skills$|spiri|\d.+life|minion damage<button class="copy-btn" onclick="navigator.clipboard.writeText('10% i.+mov|^\\+.*ion skills$|spiri|\\d.+life|minion damage')">Copy</button></div>
+        <div style="margin-top:8px;font-size:12px;color:var(--muted);">
+          <code>10% i.+mov</code> → Move Speed Boots<br>
+          <code>^\+.*ion skills$</code> → +Minion Skills<br>
+          <code>spiri</code> → Spirit mods<br>
+          <code>\d.+life</code> → Maximum Life / Life Regen<br>
+          <code>minion damage</code> → Minion Damage %
+        </div>
+        <h4 style="margin-top:12px;">Regex เฉพาะ Cold Resist (ก่อน Geonor)</h4>
+        <div class="install-box" style="padding-right:70px;word-break:break-all;font-size:12px;">cold.+res|all.+ele<button class="copy-btn" onclick="navigator.clipboard.writeText('cold.+res|all.+ele')">Copy</button></div>
+        <p style="font-size:12px;color:var(--muted);margin-top:4px;">ใช้กรองหา Ring/Amulet ที่ให้ Cold Resist — ซื้อถ้าทำให้ cap ได้ที่ 75%</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACT 2 -->
+  <div class="card card-blue" style="margin-bottom:12px;">
+    <h3 style="margin-top:0;color:var(--blue);">Act 2 — Hours 6-15 (LVL 25-40)</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">ช่วงนี้ได้ Raging Spirits + Ascendancy (Azmerian Bear) → Spirit ต้องเพิ่มขึ้น + ต้องเริ่ม cap Fire/Lightning ด้วย</p>
+    <div class="two-col">
+      <div>
+        <h4>Boss และ Damage Types (ข้อมูลจริง)</h4>
+        <table style="font-size:13px;">
+          <tbody>
+            <tr><td><strong>Rathbreaker</strong></td><td>Physical — ไม่มีธาตุพิเศษ</td></tr>
+            <tr><td><strong>Rudja</strong></td><td><span style="color:var(--red);">Fire เป็นหลัก</span> + Physical<br><strong>Fire Resist ให้ใกล้ 75% ก่อนสู้</strong></td></tr>
+            <tr><td><strong>Balbala, the Traitor</strong></td><td>Physical + <span style="color:var(--green);">Poison (Chaos)</span><br>หายตัว + วางพิษ</td></tr>
+            <tr><td><strong>Jamanra, the Abomination</strong></td><td><span style="color:var(--red);">Fire</span> + <span style="color:var(--yellow);">Lightning</span><br><strong>Final Boss Act 2 — cap ทั้งสองก่อน</strong></td></tr>
+            <tr><td><strong>Azarian</strong></td><td><span style="color:var(--red);">Fire เป็นหลัก</span> + Scorched Ground</td></tr>
+          </tbody>
+        </table>
+        <div style="font-size:12px;color:var(--yellow);margin-top:6px;">เตรียม Ruby Ring (Fire Resist) + Topaz Ring (Lightning Resist) ก่อนเข้า Act 2</div>
+        <h4 style="margin-top:12px;">Slot Priority</h4>
+        <div class="mod-list">
+          <div class="mod tier1">Sceptre — อัพเกรด +Minion Skills ถ้าเจอสูงกว่า</div>
+          <div class="mod tier1">Body Armour — +Spirit (ต้องการ 150+ Spirit)</div>
+          <div class="mod tier2">Ring x2 — Fire + Lightning Resist ให้ครบ</div>
+          <div class="mod tier2">Helm — +2 Minion Skills ถ้าหาได้</div>
+          <div class="mod note">ยังใช้ Sceptre เดียว — Giants Blood รอ Act 3+</div>
+        </div>
+      </div>
+      <div>
+        <h4>Regex (Vendor / Drop filter)</h4>
+        <div class="install-box" style="padding-right:70px;word-break:break-all;font-size:12px;">^\+.*ion skills$|fire.+res|cold.+res|light.*res|\d.+life|spiri<button class="copy-btn" onclick="navigator.clipboard.writeText('^\\+.*ion skills$|fire.+res|cold.+res|light.*res|\\d.+life|spiri')">Copy</button></div>
+        <div style="margin-top:8px;font-size:12px;color:var(--muted);">
+          <code>fire.+res</code> → Fire Resistance<br>
+          <code>cold.+res</code> → Cold Resistance<br>
+          <code>light.*res</code> → Lightning Resistance<br>
+          เพิ่ม Resistance filter — เริ่ม cap ให้ครบ 3 ธาตุ
+        </div>
+        <h4 style="margin-top:12px;">Regex เฉพาะ Spirit (Body Armour/Sceptre)</h4>
+        <div class="install-box" style="padding-right:70px;word-break:break-all;font-size:12px;">^\+.*ion skills$|spiri|allies.+pres<button class="copy-btn" onclick="navigator.clipboard.writeText('^\\+.*ion skills$|spiri|allies.+pres')">Copy</button></div>
+        <p style="font-size:12px;color:var(--muted);margin-top:4px;">
+          <code>allies.+pres</code> → "Allies in your Presence deal X% increased Damage" — mod จาก Sceptre ที่แรงมาก
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACT 3 -->
+  <div class="card card-yellow" style="margin-bottom:12px;">
+    <h3 style="margin-top:0;color:var(--yellow);">Act 3 — Hours 15-25 (LVL 40-55)</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">ได้ Wolf Pack + Catha's Balance แล้ว — เริ่มเตรียม Giants Blood setup + cap All Resist ให้ครบ</p>
+    <h4>Boss และ Damage Types (ข้อมูลจริง)</h4>
+    <table style="font-size:13px;margin-bottom:12px;">
+      <tbody>
+        <tr><td><strong>Viper Napuatzi</strong></td><td>Physical + <span style="color:var(--green);">Poison/Chaos</span><br><span style="color:var(--muted);">เน้น dodge การโจมตี — ไม่ต้องการ resist พิเศษ</span></td></tr>
+        <tr><td><strong>Zicoatl, Warden of the Core</strong></td><td><span style="color:var(--yellow);">Lightning เป็นหลัก</span> — beam + snake ball<br><strong style="color:var(--red);">Lightning Resist 75% ก่อนเข้า!</strong></td></tr>
+        <tr><td><strong>Ignagduk, the Bog Witch</strong></td><td><span style="color:var(--red);">Fire เป็นหลัก</span> (Phase 2 หนักมาก)<br><strong>Fire Resist 75% ก่อน Phase 2</strong></td></tr>
+        <tr><td><strong>Xyclucian, the Chimera</strong></td><td>All Elements + <span style="color:var(--green);">Poison</span><br><span style="color:var(--muted);">หลากหลาย element — ต้องการ All Resist 75%</span></td></tr>
+        <tr><td><strong>Doryani, Royal Thaumaturge</strong> ⚠️</td><td>Phase 1-2: <span style="color:var(--yellow);">Lightning</span> + <span style="color:var(--red);">Fire</span><br>Phase 3: <span style="color:var(--red);">Fire</span> + <span style="color:var(--blue);">Cold</span><br><strong style="color:var(--red);">Final Boss Act 3 — ต้องการ Lightning+Fire+Cold 75% ทั้งหมด</strong></td></tr>
+      </tbody>
+    </table>
+    <div class="two-col">
+      <div>
+        <h4>Resistance ที่ต้องการ</h4>
+        <table style="font-size:13px;">
+          <tbody>
+            <tr><td>Fire / Cold / Lightning</td><td><span style="color:var(--green);">75% cap ทั้งหมด</span></td></tr>
+            <tr><td>Chaos</td><td><span style="color:var(--yellow);">เริ่ม push ไป 30%+</span></td></tr>
+            <tr><td>Physical</td><td>Armour base ช่วย reduce</td></tr>
+          </tbody>
+        </table>
+        <h4 style="margin-top:12px;">Slot Priority (Giants Blood Prep)</h4>
+        <div class="mod-list">
+          <div class="mod tier1">2H Mace — เริ่มหา % increased Physical Damage</div>
+          <div class="mod tier1">Sceptre — ยังต้องการ +Minion Skills + Spirit</div>
+          <div class="mod tier1">Amulet — +Minion Skills + Spirit + Strength</div>
+          <div class="mod tier2">Ring/Gloves — All Elemental Resistances</div>
+          <div class="mod warn">เตรียม Strength ให้พอก่อน Giants Blood!</div>
+        </div>
+      </div>
+      <div>
+        <h4>Regex (เน้น weapon + resist)</h4>
+        <div class="install-box" style="padding-right:70px;word-break:break-all;font-size:12px;">^\+.*ion skills$|all.+ele|phys.*dam|spiri|minion damage<button class="copy-btn" onclick="navigator.clipboard.writeText('^\\+.*ion skills$|all.+ele|phys.*dam|spiri|minion damage')">Copy</button></div>
+        <div style="margin-top:8px;font-size:12px;color:var(--muted);">
+          <code>all.+ele</code> → "All Elemental Resistances" — cap 3 ธาตุพร้อมกัน<br>
+          <code>phys.*dam</code> → Physical Damage mods บน weapon<br>
+          ช่วงนี้เริ่ม hunt 2H Mace ที่มี % Physical Damage
+        </div>
+        <h4 style="margin-top:12px;">Regex เฉพาะ 2H Mace (Giants Blood)</h4>
+        <div class="install-box" style="padding-right:70px;word-break:break-all;font-size:12px;">phys.*dam|adds.+phys<button class="copy-btn" onclick="navigator.clipboard.writeText('phys.*dam|adds.+phys')">Copy</button></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;">
+          <code>phys.*dam</code> → "% increased Physical Damage"<br>
+          <code>adds.+phys</code> → "Adds X to Y Physical Damage"<br>
+          ต้องการทั้งสอง mod นี้บน Mace เดียวกัน = BIS
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACT 4 / MAPS -->
+  <div class="card card-red" style="margin-bottom:12px;">
+    <h3 style="margin-top:0;color:var(--red);">Act 4 + Maps — Hours 25+ (LVL 55-70+)</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Halls of the Dead quest ให้ +5% ต่อธาตุ — Chaos Resist กลายเป็น priority | เริ่ม invest weapon จริงจัง</p>
+    <div class="two-col">
+      <div>
+        <h4>Resistance ที่ต้องการ</h4>
+        <table style="font-size:13px;">
+          <tbody>
+            <tr><td>Fire / Cold / Lightning</td><td><span style="color:var(--green);">75% cap (ต้องรักษา)</span></td></tr>
+            <tr><td>Chaos</td><td><span style="color:var(--red);">40%+ (Maps Chaos หนัก)</span></td></tr>
+          </tbody>
+        </table>
+        <h4 style="margin-top:12px;">Slot Priority (Endgame setup)</h4>
+        <div class="mod-list">
+          <div class="mod tier1">2H Mace — 200%+ increased Physical Damage</div>
+          <div class="mod tier1">Sceptre — +4 Level Minion Skills + Spirit 100%+</div>
+          <div class="mod tier1">Amulet — +3 Level Minion Skills + Spirit + Gigantic Following enchant</div>
+          <div class="mod tier2">Ring x2 — Unset Ring (Skill Slot) + Strength + Resist</div>
+          <div class="mod tier2">Helm — +2 Level Minion Skills + Life Regen</div>
+          <div class="mod warn">⚠️ 0.5: Primate Idol ย้ายไปใน Helmet แล้ว — ใส่ใน Sceptre ไม่ได้อีก!</div>
+          <div class="mod note">Sceptre: ใช้ Rune จาก Runes of Aldur League (Minion/Allies damage Rune) แทน</div>
+          <div class="mod note">Helmet: ใส่ Primate Idol → Minions +15% Max Life</div>
+        </div>
+      </div>
+      <div>
+        <h4>Regex หลัก (Maps)</h4>
+        <div class="install-box" style="padding-right:70px;word-break:break-all;font-size:12px;">phys.*dam|^\+.*ion skills$|chaos.+res|all.+ele|spiri|allies.+pres<button class="copy-btn" onclick="navigator.clipboard.writeText('phys.*dam|^\\+.*ion skills$|chaos.+res|all.+ele|spiri|allies.+pres')">Copy</button></div>
+        <div style="margin-top:8px;font-size:12px;color:var(--muted);">
+          <code>chaos.+res</code> → Chaos Resistance — priority ใหม่ใน Maps<br>
+          <code>allies.+pres</code> → Allies in Presence damage — mod จาก Sceptre/Primate Rune
+        </div>
+        <h4 style="margin-top:12px;">Regex เฉพาะ BIS Sceptre</h4>
+        <div class="install-box" style="padding-right:70px;word-break:break-all;font-size:12px;">^\+.*ion skills$|allies.+pres|spiri<button class="copy-btn" onclick="navigator.clipboard.writeText('^\\+.*ion skills$|allies.+pres|spiri')">Copy</button></div>
+        <h4 style="margin-top:10px;">Regex เฉพาะ BIS Amulet</h4>
+        <div class="install-box" style="padding-right:70px;word-break:break-all;font-size:12px;">^\+.*ion skills$|spiri|gigantic<button class="copy-btn" onclick="navigator.clipboard.writeText('^\\+.*ion skills$|spiri|gigantic')">Copy</button></div>
+        <p style="font-size:12px;color:var(--muted);margin-top:4px;"><code>gigantic</code> → "Allocates Gigantic Following" enchant บน Amulet</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MASTER CHEAT SHEET -->
+  <h3>Cheat Sheet — Priority Mod ทุก Slot</h3>
+  <table>
+    <thead>
+      <tr><th>Slot</th><th>MOD #1 (สำคัญสุด)</th><th>MOD #2</th><th>ห้ามมี</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Weapon Main</strong><br><span style="color:var(--muted);font-size:12px;">2H Mace</span></td>
+        <td><span style="color:var(--green);">% increased Physical Damage</span></td>
+        <td><span style="color:var(--green);">Adds X-Y Physical Damage</span></td>
+        <td style="color:var(--red);font-size:12px;">Elemental Damage — ไม่ scale Catha's Balance</td>
+      </tr>
+      <tr>
+        <td><strong>Weapon Off</strong><br><span style="color:var(--muted);font-size:12px;">Aromatic Sceptre</span></td>
+        <td><span style="color:var(--red);">+4 Level of all Minion Skills</span></td>
+        <td><span style="color:var(--yellow);">Allies in Presence +X% damage</span></td>
+        <td style="color:var(--red);font-size:12px;">—</td>
+      </tr>
+      <tr>
+        <td><strong>Helm</strong></td>
+        <td><span style="color:var(--green);">+2 Level of all Minion Skills</span></td>
+        <td><span style="color:var(--yellow);">Life Regeneration/sec</span></td>
+        <td style="color:var(--red);font-size:12px;">ES base — ES โดน nerf 50%</td>
+      </tr>
+      <tr>
+        <td><strong>Body Armour</strong></td>
+        <td><span style="color:var(--green);">+Spirit (40-60+)</span></td>
+        <td><span style="color:var(--yellow);">Strength</span></td>
+        <td style="color:var(--red);font-size:12px;">ES chest — ES โดน nerf 50%</td>
+      </tr>
+      <tr>
+        <td><strong>Gloves</strong></td>
+        <td><span style="color:var(--green);">All Elemental Resistances</span></td>
+        <td><span style="color:var(--yellow);">Strength หรือ Life Regen</span></td>
+        <td style="color:var(--red);font-size:12px;">—</td>
+      </tr>
+      <tr>
+        <td><strong>Boots</strong></td>
+        <td><span style="color:var(--green);">35%+ Movement Speed</span></td>
+        <td><span style="color:var(--yellow);">Chaos Resistance + Strength</span></td>
+        <td style="color:var(--red);font-size:12px;">Boots ที่ไม่มี Move Speed</td>
+      </tr>
+      <tr>
+        <td><strong>Ring x2</strong></td>
+        <td><span style="color:var(--green);">Unset Ring implicit (Skill Slot)</span></td>
+        <td><span style="color:var(--yellow);">Strength + All Res</span></td>
+        <td style="color:var(--red);font-size:12px;">—</td>
+      </tr>
+      <tr>
+        <td><strong>Amulet</strong></td>
+        <td><span style="color:var(--green);">+3 Level of all Minion Skills</span></td>
+        <td><span style="color:var(--green);">+Spirit + Gigantic Following</span></td>
+        <td style="color:var(--red);font-size:12px;">—</td>
+      </tr>
+      <tr>
+        <td><strong>Jewel</strong></td>
+        <td><span style="color:var(--green);">Minion Damage %</span></td>
+        <td><span style="color:var(--yellow);">Minion Crit Chance/Multi</span></td>
+        <td style="color:var(--red);font-size:12px;">—</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="alert alert-yellow" style="margin-top:16px;">
+    Vendor check ทุก Town อย่าข้าม — ใช้เวลาแค่ 30 วิแต่ +Minion Skills Sceptre จาก Vendor = DPS เพิ่ม 12%+ ฟรี
+  </div>
+</section>
+
+<!-- CRAFTING -->
+<section id="crafting">
+  <h2>Crafting Guide — Patch 0.5 Crafted Modifier System</h2>
+
+  <!-- WEAPON UPGRADE TIMELINE -->
+  <div style="border:1px solid var(--yellow);border-radius:8px;padding:16px;margin-bottom:20px;background:rgba(230,168,56,0.05);">
+    <h3 style="color:var(--yellow);margin-top:0;">⚔️ อัพเกรด 2H Mace ตาม Act — Priority สูงสุดของ Build</h3>
+    <div class="alert alert-yellow" style="margin-bottom:14px;font-size:14px;">
+      <strong>ทำไม Mace ต้องอัพทุก Act:</strong> Catha's Balance ให้ Companions ได้ <strong>60% of weapon damage</strong> — Mace แรงแค่ไหน ทุก Minion แรงแค่นั้น<br>
+      อัพ Mace = DPS ทีมขึ้นทันที ไม่ต้องรอ gem level
+    </div>
+
+    <!-- ACT 1 -->
+    <div class="card" style="margin-bottom:12px;padding:14px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <span style="background:var(--green);color:#000;font-weight:700;padding:2px 10px;border-radius:4px;font-size:13px;">Act 1</span>
+        <strong>เริ่มต้น → Lv11 — หาฐานใหม่ + Transmute</strong>
+      </div>
+      <div class="two-col" style="font-size:13px;">
+        <div>
+          <div style="margin-bottom:8px;"><strong style="color:var(--text);">Red Vale (เร็วที่สุด):</strong><br>
+          <span style="color:var(--muted);">Rusted Arms + Refined Arms ใน Red Vale การันตีว่า open ครบ = ได้ทุก weapon type อย่างน้อย 1 ชิ้น<br>
+          คลิกทุกอันที่เจอเสมอ</span></div>
+          <div style="margin-bottom:8px;"><strong style="color:var(--text);">หลัง Rust King:</strong><br>
+          <span style="color:var(--muted);">เช็ค vendor หา magic weapon ที่มี flat damage หรือ %IPD — ถ้าไม่มี magic ให้ซื้อ white แล้ว Transmute</span></div>
+          <div><strong style="color:var(--text);">Cemetery Trick (ฟรี ไม่ต้องทำอะไรพิเศษ):</strong><br>
+          <span style="color:var(--muted);">เข้า Mausoleum of the Praetor ก่อน → Tomb of the Consort จะ bump เป็น Lv9<br>
+          Boss drop +2 iLvl = โอกาสได้ฐาน Lv11 เร็วขึ้น</span></div>
+        </div>
+        <div>
+          <div style="background:rgba(78,200,120,0.08);border:1px solid rgba(78,200,120,0.25);border-radius:6px;padding:10px;">
+            <div style="font-weight:700;margin-bottom:6px;color:var(--green);">⭐ Ogham Village — อย่าลืม!</div>
+            <div style="color:var(--muted);">เก็บ <strong style="color:var(--text);">Blank Rune</strong> + <strong style="color:var(--text);">Artificer's Orb</strong> ตรงหน้า Smithing Tools<br>
+            → แลก Blank Rune กับ <strong>Renly</strong> เพื่อได้ <strong style="color:var(--yellow);">Lesser Storm Rune</strong><br>
+            → ใช้ใส่ Mace Act 2 — สำคัญมาก</div>
+          </div>
+          <div style="margin-top:10px;background:rgba(78,159,224,0.08);border:1px solid rgba(78,159,224,0.25);border-radius:6px;padding:10px;">
+            <div style="font-weight:700;margin-bottom:6px;color:var(--blue);">Lv11 — ถึงเวลาอัพ</div>
+            <div style="color:var(--muted);">เช็ค vendor หาฐาน Mace Lv11 ใหม่<br>
+            ถ้าไม่มี drop ให้ซื้อ white แล้ว <strong>Transmute → Augment</strong><br>
+            เป้าหมาย: flat physical damage หรือ %IPD</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACT 2 -->
+    <div class="card card-yellow" style="margin-bottom:12px;padding:14px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <span style="background:var(--yellow);color:#000;font-weight:700;padding:2px 10px;border-radius:4px;font-size:13px;">Act 2</span>
+        <strong>GIGA Craft — Mace Lv16 ที่จะใช้ไปถึง Act 3</strong>
+      </div>
+      <div class="alert" style="background:rgba(230,168,56,0.12);border-color:var(--yellow);font-size:13px;margin-bottom:10px;">
+        <strong>Deshar:</strong> เก็บ Artificer's Orb การันตีบริเวณกำแพงด้านนอก ใกล้ทางเข้า — เก็บทุกครั้ง
+      </div>
+      <div class="two-col" style="font-size:13px;">
+        <div>
+          <div style="font-weight:700;color:var(--yellow);margin-bottom:8px;">ขั้นตอน GIGA Weapon Craft:</div>
+          <ol style="padding-left:16px;color:var(--muted);line-height:1.8;">
+            <li>เช็ค vendor ทันทีที่เข้า Act 2 หาฐาน <strong style="color:var(--text);">Mace iLvl16</strong> (เช็คซ้ำทุก level ถ้าไม่มีดี)</li>
+            <li>เริ่มจาก magic base ที่มี <strong style="color:var(--text);">flat damage หรือ %IPD อยู่แล้ว</strong></li>
+            <li>ใช้ <strong style="color:var(--green);">Essence of Abrasion / Flames / Ice / Electricity</strong> → การันตี prefix damage ที่ 2<br>
+            <span style="color:var(--muted);font-size:12px;">ถ้าไม่มี Essence → Regal Orb แทน (ถ้า Regal ได้ prefix ดี → ไปต่อ / ได้ bad prefix → เริ่มใหม่)</span></li>
+            <li>Slam <strong style="color:var(--yellow);">Exalted Orb</strong> จนได้ <strong>3 prefixes</strong> (กด Alt ดู item เช็ค prefix count)</li>
+            <li>ใส่ <strong style="color:var(--yellow);">Lesser Storm Rune</strong> (จาก Renly) + damage rune อื่นที่มี</li>
+            <li>ทุบ <strong>Blacksmith's Whetstone</strong> เพิ่ม quality</li>
+          </ol>
+        </div>
+        <div>
+          <div style="background:rgba(78,200,120,0.08);border:1px solid rgba(78,200,120,0.25);border-radius:6px;padding:10px;margin-bottom:8px;">
+            <div style="font-weight:700;color:var(--green);margin-bottom:6px;">Prefix ที่ต้องการ (เรียงตาม value)</div>
+            <div class="mod tier1">% increased Physical Damage</div>
+            <div class="mod tier1">Flat Physical Damage (Adds X to Y)</div>
+            <div class="mod tier2">Flat Elemental Damage (Fire/Cold/Lightning)</div>
+            <div class="mod note">Suffix พิเศษ: +# to Skill Level (ถ้าโชคดีได้)</div>
+          </div>
+          <div style="background:rgba(200,78,78,0.08);border:1px solid rgba(200,78,78,0.25);border-radius:6px;padding:10px;">
+            <div style="font-weight:700;color:var(--red);margin-bottom:4px;">Roll ที่รับได้ vs ทิ้ง</div>
+            <div style="color:var(--muted);font-size:12px;">
+              ✅ Tier สูงสุด หรือ รองสูงสุด → ไปต่อ<br>
+              ❌ Tier ล่างๆ → เริ่มใหม่จาก magic base ใหม่<br>
+              <span style="color:var(--yellow);">Mace นี้ใช้ไปถึง Act 3 (Lv33) — ลงทุนให้คุ้ม</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACT 3 -->
+    <div class="card" style="margin-bottom:12px;padding:14px;border-color:var(--orange);">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <span style="background:var(--orange);color:#000;font-weight:700;padding:2px 10px;border-radius:4px;font-size:13px;">Act 3</span>
+        <strong>Mace iLvl33 — เปลี่ยน Essence เป็นชั้นปกติ</strong>
+      </div>
+      <div class="two-col" style="font-size:13px;color:var(--muted);">
+        <div>
+          <div style="margin-bottom:8px;"><strong style="color:var(--text);">เช็ค vendor หาฐาน Mace iLvl33</strong> ทันที (เช็คซ้ำทุก level ถ้าไม่มี)</div>
+          <div style="margin-bottom:8px;">กระบวนการ craft เหมือน Act 2 ทุกอย่าง แต่:</div>
+          <div class="alert" style="background:rgba(200,128,78,0.12);border-color:var(--orange);font-size:12px;">
+            <strong>❌ อย่าใช้ Lesser Essences อีก</strong> (Abrasion/Flames/Ice/Electricity ชั้น Lesser)<br>
+            flat roll ต่ำเกินไปสำหรับ iLvl33 — เป็น dead mod<br><br>
+            <strong>✅ ใช้ regular Essences</strong> (Essence of Abrasion / Flames / Ice / Electricity) เท่านั้น<br>
+            ถ้าไม่มี regular Essence → ใช้ Regal แทน
+          </div>
+        </div>
+        <div>
+          <div style="background:rgba(230,168,56,0.08);border:1px solid rgba(230,168,56,0.25);border-radius:6px;padding:10px;">
+            <div style="font-weight:700;color:var(--yellow);margin-bottom:6px;">💡 Artificer's Orb การันตี</div>
+            <div style="color:var(--muted);font-size:12px;">ใน Act 3 มี Artificer's Orb วางอยู่ใกล้กำแพงด้านนอก บริเวณทางเข้า map<br>
+            เก็บทุกครั้ง — ใช้เพิ่ม socket ให้ Mace ใหม่</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACT 4 + INTERLUDES -->
+    <div class="card" style="padding:14px;border-color:var(--red);">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <span style="background:var(--red);color:#fff;font-weight:700;padding:2px 10px;border-radius:4px;font-size:13px;">Act 4</span>
+        <span style="background:var(--purple);color:#fff;font-weight:700;padding:2px 10px;border-radius:4px;font-size:13px;">Interludes</span>
+        <strong>Greater Rune + Mace ระดับ Endgame</strong>
+      </div>
+      <div class="two-col" style="font-size:13px;">
+        <div>
+          <div style="margin-bottom:8px;color:var(--muted);"><strong style="color:var(--text);">Act 4:</strong> ใช้ Mace iLvl33 ต่อไปก่อน จนเจอฐาน Mace iLvl ~42+ ใหม่<br>
+          รับ <strong style="color:var(--yellow);">Greater Rune การันตี</strong> จาก <strong>The Blind Beast</strong> ใน Isle of Kin<br>
+          → ใส่ Greater Rune ใน Mace ทันที</div>
+          <div style="color:var(--muted);"><strong style="color:var(--text);">Interludes (Act 1 replay):</strong> craft Mace ใหม่ด้วยกระบวนการเดิม<br>
+          Vendor ใน <strong>Holten</strong> (Act 1 Interlude) ขาย <strong style="color:var(--yellow);">Greater Storm Rune การันตี</strong><br>
+          → ซื้อและใส่ Mace ทันที</div>
+        </div>
+        <div>
+          <div style="background:rgba(78,159,224,0.08);border:1px solid rgba(78,159,224,0.25);border-radius:6px;padding:10px;">
+            <div style="font-weight:700;color:var(--blue);margin-bottom:8px;">Rune Priority — ใส่ตามลำดับนี้</div>
+            <div style="display:flex;flex-direction:column;gap:4px;font-size:13px;">
+              <div style="display:flex;align-items:center;gap:8px;"><span style="background:var(--yellow);color:#000;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:700;">1</span><strong>Storm Rune</strong> <span style="color:var(--muted);font-size:12px;">— ดีที่สุด (Shock = damage amp)</span></div>
+              <div style="display:flex;align-items:center;gap:8px;"><span style="background:#aaa;color:#000;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:700;">2</span><strong>Desert Rune</strong> <span style="color:var(--muted);font-size:12px;">— fire damage</span></div>
+              <div style="display:flex;align-items:center;gap:8px;"><span style="background:#aaa;color:#000;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:700;">3</span><strong>Glacial Rune</strong> <span style="color:var(--muted);font-size:12px;">— cold damage</span></div>
+              <div style="display:flex;align-items:center;gap:8px;"><span style="background:#888;color:#fff;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:700;">4</span><strong>Iron Rune</strong> <span style="color:var(--muted);font-size:12px;">— physical (ขึ้นอันดับถ้า Mace มี flat phys สูงมาก)</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END WEAPON UPGRADE TIMELINE -->
+
+  <div class="alert alert-blue" style="font-size:15px;">
+    <strong>Patch 0.5 Rule ใหม่:</strong> Crafting methods ที่ add <u>guaranteed modifier เดียว</u> จะ add มันในรูปแบบ <strong>"Crafted Modifier"</strong> (สีน้ำเงินในเกม) — items มีได้แค่ <strong>1 Crafted Modifier เท่านั้น</strong> ต่อ item
+  </div>
+
+  <div class="card card-yellow" style="margin-bottom:16px;">
+    <h3 style="margin-top:0;">กฎหลักที่ต้องจำ</h3>
+    <div class="two-col">
+      <div>
+        <ul style="font-size:14px;list-style:none;padding:0;">
+          <li style="margin-bottom:10px;">🔵 <strong style="color:var(--blue);">Crafted Modifier</strong> = modifier สีน้ำเงิน — มาจาก Essence หรือ Alloy</li>
+          <li style="margin-bottom:10px;">⚠️ Item มี Crafted Modifier ได้แค่ <strong style="color:var(--red);">1 ชิ้นเท่านั้น</strong></li>
+          <li style="margin-bottom:10px;">✅ ถ้าใช้ Essence บน item แล้ว → item นั้น <strong>ใช้ Alloy ซ้ำไม่ได้อีก</strong></li>
+          <li style="margin-bottom:10px;">✅ วาง Crafted Modifier บน slot ที่ยังขาด mod สำคัญที่สุด</li>
+          <li>📌 Crafted Modifier ถูก lock — ไม่หลุดจาก Orb of Chaos / Annul ปกติ</li>
+        </ul>
+      </div>
+      <div style="background:rgba(78,159,224,0.08);border:1px solid rgba(78,159,224,0.3);border-radius:6px;padding:12px;">
+        <h4 style="color:var(--blue);margin-bottom:8px;">ตัวอย่างการใช้ถูก</h4>
+        <div style="font-size:13px;color:var(--muted);">
+          Body Armour: ใส่ Essence of Battle → ได้ +Skill Gems<br>
+          → ไม่ต้อง Alloy บน Body Armour อีก (slot crafted เต็มแล้ว)<br><br>
+          2H Mace: ใส่ Alloy ที่ให้ Physical Damage<br>
+          → ไม่ต้อง Essence บน Mace แล้ว
+        </div>
+        <h4 style="color:var(--red);margin-top:10px;margin-bottom:8px;">ตัวอย่างการใช้ผิด</h4>
+        <div style="font-size:13px;color:var(--muted);">
+          ❌ ใช้ Essence บน item → แล้วพยายาม Alloy บน item เดียวกัน<br>
+          → ทำไม่ได้ — Crafted Modifier slot เต็มแล้ว
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Timeline — Crafting Unlock ตาม Act</h3>
+  <table style="margin-bottom:16px;">
+    <thead>
+      <tr><th>Act</th><th>Crafting Method</th><th>วิธี Unlock</th><th>ใช้กับ Build</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong style="color:var(--green);">Act 1</strong></td>
+        <td>
+          <strong>Essences (drop)</strong><br>
+          <span style="color:var(--muted);font-size:12px;">Essence of Battle, Essence of the Body ฯลฯ</span>
+        </td>
+        <td style="font-size:13px;">Drop จาก Imprisoned Essence monsters ที่เจอใน map<br>
+        <span style="color:var(--green);">พร้อมใช้ทันที ไม่ต้อง unlock</span></td>
+        <td>
+          <div class="mod tier1">Essence of Battle → +Skill Level บน Sceptre</div>
+          <div class="mod tier2">Essence of the Body → Max Life บน Helm/Armour</div>
+        </td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--green);">Act 1</strong></td>
+        <td>
+          <strong>Verisium Runeforging</strong><br>
+          <span style="color:var(--muted);font-size:12px;">ใส่ Rune Ward ใน Armour</span>
+        </td>
+        <td style="font-size:13px;">คุย NPC <strong>Farrow</strong> ใน Clearfell Encampment<br>
+        → ทำ quest → unlock Runeforging</td>
+        <td>
+          <div class="mod tier2">ใส่ Rune ใน Sceptre (slot ใหม่ใน 0.5)</div>
+          <div class="mod note">Rune ไม่นับเป็น Crafted Modifier — ทำได้แยกกัน</div>
+        </td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--yellow);">Act 2</strong></td>
+        <td>
+          <strong>Alloy Currencies (13 ชนิด)</strong><br>
+          <span style="color:var(--muted);font-size:12px;">Replace existing mod ด้วย Crafted Modifier พิเศษ</span>
+        </td>
+        <td style="font-size:13px;">ทำ quest <strong>Farrow Act 2</strong> → Unlock Remnant encounters<br>
+        <span style="color:var(--yellow);">ต้อง Rare item เท่านั้น (ไม่ทำงานบน Magic item)</span></td>
+        <td>
+          <div class="mod tier1">Alloys บน gear ที่ขาด mod สำคัญ</div>
+          <div class="mod warn">Remove random mod แล้วใส่ mod ใหม่ — เสี่ยง!</div>
+        </td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--orange);">Act 3</strong></td>
+        <td>
+          <strong>Unique Verisium Runeforging</strong>
+        </td>
+        <td style="font-size:13px;">Farrow Act 3 quest<br>อัพเกรด Unique item ที่ drop level ต่ำ</td>
+        <td>
+          <div class="mod note">ไม่ค่อยสำคัญสำหรับ build นี้</div>
+        </td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--red);">Act 4</strong></td>
+        <td>
+          <strong>Ancient Runes</strong>
+        </td>
+        <td style="font-size:13px;">Farrow Act 4 quest</td>
+        <td>
+          <div class="mod tier2">Rune ระดับ Endgame สำหรับ Sceptre</div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Crafted Modifier Plan — Spirit Walker Summoner</h3>
+  <div class="alert alert-green" style="margin-bottom:12px;">
+    <strong>หลักการ:</strong> 1 Slot = 1 Crafted Modifier — วางให้ถูก slot ตั้งแต่ต้น แล้วไม่ต้องเสียซ้ำ
+  </div>
+  <table>
+    <thead>
+      <tr><th>Slot</th><th>Crafted Modifier เป้าหมาย</th><th>วิธี</th><th>Act ที่ทำได้</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Sceptre (Off-hand)</strong></td>
+        <td><span style="color:var(--red);">+1 to Level of all Minion Skills</span><br>
+        <span style="color:var(--muted);font-size:12px;">นี่คือ Crafted Modifier สำคัญที่สุดของ build</span></td>
+        <td>Essence of Battle / Essence เฉพาะ Minion Skills<br>
+        <span style="color:var(--muted);font-size:12px;">หรือ Alloy ที่ให้ Skill Level (ถ้ามีใน 13 ชนิด)</span></td>
+        <td><span style="color:var(--green);">Act 1+ (Essence drop)</span><br>Act 2+ (Alloy)</td>
+      </tr>
+      <tr>
+        <td><strong>Body Armour</strong></td>
+        <td><span style="color:var(--green);">+Spirit (40–60)</span><br>
+        <span style="color:var(--muted);font-size:12px;">Spirit เพิ่ม Companion capacity</span></td>
+        <td>Alloy ชนิดที่ให้ Spirit (ตรวจสอบใน Remnant)<br>
+        <span style="color:var(--muted);font-size:12px;">หรือ Essence of Sorcery ถ้าให้ Spirit</span></td>
+        <td><span style="color:var(--yellow);">Act 2+ (Alloy)</span></td>
+      </tr>
+      <tr>
+        <td><strong>Helm</strong></td>
+        <td><span style="color:var(--green);">+2 to Level of all Minion Skills</span><br>
+        <span style="color:var(--muted);font-size:12px;">หรือ Life Regeneration ถ้าหา Minion Skills ไม่ได้</span></td>
+        <td>Essence of Battle<br>
+        <span style="color:var(--muted);font-size:12px;">หรือ Alloy ที่ให้ Skill Level</span></td>
+        <td><span style="color:var(--green);">Act 1+ (Essence)</span></td>
+      </tr>
+      <tr>
+        <td><strong>Amulet</strong></td>
+        <td><span style="color:var(--green);">+1 to Level of all Minion Skills</span><br>
+        <span style="color:var(--muted);font-size:12px;">หรือ +Spirit ถ้า Skills level ไม่ขาด</span></td>
+        <td>Essence of Battle<br>
+        <span style="color:var(--muted);font-size:12px;">หรือ Runic Alloy (ring/amulet variant)</span></td>
+        <td><span style="color:var(--green);">Act 1+ (Essence)</span></td>
+      </tr>
+      <tr>
+        <td><strong>2H Mace (Main)</strong></td>
+        <td><span style="color:var(--green);">% increased Physical Damage</span><br>
+        <span style="color:var(--muted);font-size:12px;">หลัง Giants Blood นี่คือ top priority weapon craft</span></td>
+        <td>Alloy ที่ให้ Physical Damage บน weapon<br>
+        <span style="color:var(--muted);font-size:12px;">Imbued Alloy → Elemental Ailment (ไม่ใช้)<br>หา Alloy ที่ให้ % Phys Damage โดยตรง</span></td>
+        <td><span style="color:var(--yellow);">Act 2+ (Alloy)</span><br>ลงทุนหลัง Giants Blood</td>
+      </tr>
+      <tr>
+        <td><strong>Ring x2</strong></td>
+        <td><span style="color:var(--yellow);">All Elemental Resistances</span><br>
+        <span style="color:var(--muted);font-size:12px;">ถ้า cap ได้แล้ว → หา Strength สำหรับ Giants Blood</span></td>
+        <td>Essence of Flames/Cold/Lightning ตามที่ขาด</td>
+        <td><span style="color:var(--green);">Act 1+ (Essence)</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-purple" style="margin-top:16px;">
+    <h3 style="margin-top:0;">Alloy System — Act 2+ (สำคัญมาก)</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Alloys 13 ชนิด unlock หลัง Farrow's Quest Act 2 — เก็บ Remnant encounters ไปด้วยระหว่างเดิน</p>
+    <div class="two-col">
+      <div>
+        <h4>วิธีใช้ Alloy</h4>
+        <ol class="priority-list" style="font-size:13px;">
+          <li><div>ต้องเป็น <strong>Rare item (สีเหลือง)</strong> เท่านั้น — Magic item ใช้ไม่ได้</div></li>
+          <li><div>Alloy <strong>ลบ 1 mod แบบสุ่ม</strong> ออกก่อน แล้วใส่ mod ใหม่ที่การันตีเข้ามา</div></li>
+          <li><div>ผลลัพธ์คือ <strong>Crafted Modifier</strong> สีน้ำเงิน — slot crafted เต็มแล้ว</div></li>
+          <li><div>ใช้บน item ที่ mod ดีๆ ครบแล้ว — อย่าเสียถ้า item ยังต้องการ mod อื่น</div></li>
+        </ol>
+      </div>
+      <div>
+        <h4>Alloy ที่น่าใช้สำหรับ build นี้</h4>
+        <div class="mod-list">
+          <div class="mod tier1">Alloy ที่ให้ Minion/Companion Damage บน weapon</div>
+          <div class="mod tier1">Alloy ที่ให้ +Spirit บน Body Armour</div>
+          <div class="mod tier2">Mystic Alloy — ยังไม่เปิดเผย อาจให้ caster/minion mod</div>
+          <div class="mod note">Imbued Alloy (elemental ailment) — ไม่มีประโยชน์กับ build</div>
+          <div class="mod note">Swift Alloy (flask charges) — ใช้ได้บน Belt ถ้าอยากได้</div>
+          <div class="mod note">Runic Alloy — ใส่บน Ring/Amulet สำหรับ Runic Ward</div>
+        </div>
+        <div style="margin-top:8px;font-size:12px;color:var(--yellow);">
+          ⚠️ Alloy 13 ชนิดยังไม่เปิดเผยทั้งหมด — เช็ค tooltip ในเกมก่อนใช้เสมอ
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-green" style="margin-top:12px;">
+    <h3 style="margin-top:0;">Essence Priority สำหรับ Spirit Walker</h3>
+    <table style="font-size:13px;">
+      <thead>
+        <tr><th>Essence</th><th>Guaranteed Mod</th><th>ใส่บน Slot</th><th>Priority</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong style="color:var(--green);">Essence of Battle</strong></td>
+          <td>+# to Level of Attack/Skill Gems</td>
+          <td>Sceptre, Helm, Amulet</td>
+          <td><span style="color:var(--red);">★★★ สูงสุด</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--green);">Essence of the Body</strong></td>
+          <td>Maximum Life</td>
+          <td>Helm, Body Armour, Boots</td>
+          <td><span style="color:var(--yellow);">★★ กลาง</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--yellow);">Essence of Flames</strong></td>
+          <td>Fire Resistance</td>
+          <td>Ring — ก่อนเข้า Act 2</td>
+          <td><span style="color:var(--yellow);">★★ situational</span></td>
+        </tr>
+        <tr>
+          <td><strong>Essence of Sorcery</strong></td>
+          <td>Spell Damage / +Spell Level</td>
+          <td>ไม่ค่อยมีประโยชน์กับ build นี้</td>
+          <td><span style="color:var(--muted);">★ ต่ำ — ขายแทน</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="font-size:12px;color:var(--muted);margin-top:8px;">
+      Essence tier: Lesser → Greater → Grand → Perfect (แรงขึ้น) — Perfect Essence: replace <u>existing</u> mod แทนที่จะ add ใหม่
+    </div>
+  </div>
+</section>
+
+<!-- BOSS -->
+<section id="bosses">
+  <h2>Boss Guide</h2>
+
+  <div class="card card-red">
+    <h3>Count Geonor — Act 1 Final Boss</h3>
+    <div class="alert alert-red" style="margin-bottom:12px;">
+      Cold Resist 75% ก่อนสู้ Geonor เสมอ — Geonor มี ice mechanics รุนแรงมาก
+    </div>
+    <div class="two-col">
+      <div>
+        <h4>เตรียมก่อนสู้:</h4>
+        <ul style="font-size:13px;color:var(--muted);list-style:disc;padding-left:16px;">
+          <li>Cold Resist = 75% cap</li>
+          <li>Life 500+</li>
+          <li>Skeletal Sniper LVL 5+</li>
+          <li>Raging Spirits พร้อม</li>
+          <li>Life Flask เตรียมไว้</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Strategy:</h4>
+        <ul style="font-size:13px;color:var(--muted);list-style:disc;padding-left:16px;">
+          <li>วาง Flame Wall ตรงหน้า Geonor</li>
+          <li>Summon Minions ให้เต็มก่อนเข้าสู้</li>
+          <li>Phase 2: Geonor แตกเป็น 3 ร่าง — focus ร่างหลัก</li>
+          <li>Dodge Ice Spikes ออกด้านข้าง</li>
+          <li>Minions สู้แทน — player หลบ</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-yellow">
+    <h3>DPS Check — Cemetery of the Eternals</h3>
+    <div style="font-size:13px;color:var(--muted);">
+      ผ่าน 3 bosses ก่อน Count Geonor: <strong style="color:var(--text);">Alisia + Draven + Lachlann</strong><br>
+      DPS ไม่พอ → อัพ Skeletal Sniper gem level + ใส่ Lightning Attunement
+    </div>
+  </div>
+
+  <div class="card card-red" style="margin-top:16px;">
+    <h3>Doryani, Royal Thaumaturge — Act 3 Final Boss</h3>
+    <div class="alert alert-red" style="margin-bottom:12px;">
+      ต้องการ Fire + Lightning + Cold Resist 75% ทั้งหมด — boss เปลี่ยน damage type ทุก Phase
+    </div>
+    <div class="two-col">
+      <div>
+        <h4>Damage ตาม Phase:</h4>
+        <table style="font-size:13px;">
+          <tbody>
+            <tr>
+              <td>Phase 1–2</td>
+              <td><span style="color:var(--yellow);">Lightning</span> + <span style="color:var(--red);">Fire</span><br>
+              <span style="color:var(--muted);">Beam attacks + Flame explosions</span></td>
+            </tr>
+            <tr>
+              <td>Phase 3</td>
+              <td><span style="color:var(--red);">Fire</span> + <span style="color:var(--blue);">Cold</span><br>
+              <span style="color:var(--muted);">Cryo + Flame combo — อันตรายที่สุด</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <h4 style="margin-top:12px;">เตรียมก่อนสู้:</h4>
+        <ul style="font-size:13px;color:var(--muted);list-style:disc;padding-left:16px;">
+          <li><strong style="color:var(--red);">Fire Resist 75%</strong></li>
+          <li><strong style="color:var(--yellow);">Lightning Resist 75%</strong></li>
+          <li><strong style="color:var(--blue);">Cold Resist 75%</strong></li>
+          <li>Life 900+ (boss hit หนักมาก)</li>
+          <li>Wolf Pack + Catha's Balance พร้อม</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Strategy:</h4>
+        <ul style="font-size:13px;color:var(--muted);list-style:disc;padding-left:16px;">
+          <li>Summon Minions ให้เต็ม <strong>ก่อน</strong> เข้า arena</li>
+          <li>Doryani มี Beam attack — เดินตัดหลบ อย่าวิ่งตาม</li>
+          <li>Phase transition: Minions ถูก reset บ้าง — Summon ใหม่ทันที</li>
+          <li>Flame Wall ค้างไว้หน้าตัวเอง — Sniper ยิงผ่าน = fire damage bonus</li>
+          <li>Wolf Pack โอบล้อมดีมาก — Doryani ไม่เคลื่อนที่เร็ว</li>
+          <li>Phase 3: ระวัง Ice explosion ที่ลงพื้น — เปลี่ยนตำแหน่งทันที</li>
+        </ul>
+        <div style="font-size:12px;color:var(--yellow);margin-top:8px;background:rgba(224,184,78,0.1);border:1px solid rgba(224,184,78,0.3);border-radius:4px;padding:8px;">
+          <strong>Boss ยากที่สุดใน Campaign</strong> — ถ้า Minions ตายหมดระหว่างสู้ให้ Dash ออก Summon ใหม่ แล้วกลับเข้าสู้
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ENDGAME -->
+<section id="endgame">
+  <h2>Endgame Setup (จาก PoB)</h2>
+
+  <div class="pob-box">
+    <div class="pob-title">PoB: poe.ninja/poe2/pob/1b6db | Forum: pathofexile.com/forum/view-thread/3931901</div>
+    <div class="alert alert-yellow" style="margin-top:8px;">
+      PoB สร้างใน version 0.4 — ItemSet 1 (ES gear) โดน nerf 50% ใน 0.5
+      ใช้ Armour setup จาก ItemSet 2 แทน + skills เหมือนกันทุกอย่าง
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Skill Group</th><th>Main Gem</th><th>Support Gems (PoB)</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Clear / Main DPS</strong></td>
+        <td style="color:var(--green);">Skeletal Sniper LVL 20</td>
+        <td>Lightning Attunement + Heft + Chain III + Muster + Feeding Frenzy II</td>
+      </tr>
+      <tr>
+        <td><strong>Secondary Clear</strong></td>
+        <td style="color:var(--red);">Raging Spirits LVL 20</td>
+        <td>Fire Attunement + Rage III + Fire Penetration I + Muster + Feeding Frenzy II</td>
+      </tr>
+      <tr>
+        <td><strong>Companion DPS</strong></td>
+        <td style="color:var(--blue);">Wolf Pack LVL 21</td>
+        <td>Impale + Brutality III + Rage III + Muster + Feeding Frenzy II</td>
+      </tr>
+      <tr>
+        <td><strong>Utility / Boss</strong></td>
+        <td style="color:var(--orange);">Flame Wall LVL 21</td>
+        <td>Efficiency II + Rapid Casting II + Rageforged II + Deliberation + Spell Cascade</td>
+      </tr>
+      <tr>
+        <td><strong>Beast Companion</strong></td>
+        <td style="color:var(--purple);">Summon Beast (Sun Clan Scavenger)</td>
+        <td>Muster + Brutality III + Feeding Frenzy II + Heavy Swing + Rage III</td>
+      </tr>
+      <tr>
+        <td><strong>Azmerian Bear</strong></td>
+        <td style="color:var(--teal);">(จาก Ascendancy)</td>
+        <td>Bleed III + Rage III + Feeding Frenzy II + Muster + Brutality III</td>
+      </tr>
+      <tr>
+        <td><strong>Rage</strong></td>
+        <td style="color:var(--yellow);">Eternal Rage + Berserk</td>
+        <td>Berserk: Dialla's Desire + Uhtred's Omen</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Economy Alert</h3>
+  <div class="alert alert-red">
+    Sell ก่อน D+7 — Spirit Walker items จะ spike ต้น league แล้วร่วงเมื่อโดน hotfix nerf<br>
+    ขาย: Aromatic Sceptre (+4 Minion Skills) | Primate Idol (Helmet Idol) | Amulet (+Minion Skills) | Unset Ring
+  </div>
+
+  <div class="two-col">
+    <div class="card card-green">
+      <h4>ซื้อก่อนแพง (D+12 ชม)</h4>
+      <ul style="font-size:13px;color:var(--muted);list-style:disc;padding-left:16px;">
+        <li>Aromatic Sceptre (+4 Minion Skills)</li>
+        <li>Gold Amulet (Gigantic Following enchant)</li>
+        <li>Primate Idol (ใส่ Helmet — Minions +15% Max Life)</li>
+        <li>Rune จาก Runes of Aldur สำหรับ Sceptre slot</li>
+        <li>Unset Ring (Skill Slot implicit)</li>
+      </ul>
+    </div>
+    <div class="card card-red">
+      <h4>หลีกเลี่ยง</h4>
+      <ul style="font-size:13px;color:var(--muted);list-style:disc;padding-left:16px;">
+        <li>ES gear ทั้งหมด — ES nerf 50%</li>
+        <li>ลงทุน BIS gear ก่อนรู้ว่า nerf มาเมื่อไร</li>
+        <li>ซื้อ 2H Mace แพงก่อน LVL 50</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div style="background:var(--surface);border-top:1px solid var(--border);padding:16px;text-align:center;color:var(--muted);font-size:12px;">
+  Spirit Walker Summoner | Runes of Aldur 0.5.0 | By Heroxsolbadguy | PoB: poe.ninja/poe2/pob/1b6db<br>
+  KhemTEAM — POE Coach | อัปเดต: 2026-05-27 (Passive Tree 0.5 verified)
+</div>
+
+</body>
+</html>

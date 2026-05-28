@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="th">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>POE2 Campaign League Mechanic Rewards Report</title>
+	<style>
+		:root {
+			--bg: #f6f7fb;
+			--paper: #ffffff;
+			--ink: #20242c;
+			--muted: #626a78;
+			--line: #dde2ea;
+			--head: #26364f;
+			--accent: #b88746;
+			--accent-soft: #fff3df;
+			--row: #fafbfd;
+			--currency: #e7f1ff;
+			--gem: #eaf8ef;
+			--equipment: #fff0ec;
+			--rune: #f2ecff;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			background: var(--bg);
+			color: var(--ink);
+			font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+			line-height: 1.65;
+		}
+
+		.page {
+			max-width: 1180px;
+			margin: 0 auto;
+			padding: 34px 18px 48px;
+		}
+
+		.report-header {
+			background: var(--head);
+			color: #fff;
+			padding: 28px 30px;
+			border-radius: 8px;
+			box-shadow: 0 12px 30px rgba(23, 33, 50, 0.16);
+		}
+
+		h1 {
+			margin: 0 0 8px;
+			font-size: 30px;
+			line-height: 1.25;
+			letter-spacing: 0;
+		}
+
+		.subtitle {
+			margin: 0;
+			color: #d9e2ef;
+			font-size: 15px;
+		}
+
+		.meta {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 12px;
+			margin: 18px 0 24px;
+		}
+
+		.meta-box {
+			background: var(--paper);
+			border: 1px solid var(--line);
+			border-radius: 8px;
+			padding: 14px 16px;
+		}
+
+		.meta-label {
+			display: block;
+			color: var(--muted);
+			font-size: 13px;
+		}
+
+		.meta-value {
+			display: block;
+			margin-top: 3px;
+			font-weight: 700;
+		}
+
+		.summary {
+			background: var(--accent-soft);
+			border-left: 5px solid var(--accent);
+			border-radius: 8px;
+			padding: 15px 18px;
+			margin-bottom: 24px;
+		}
+
+		.summary p {
+			margin: 0;
+		}
+
+		.section {
+			margin-top: 24px;
+			background: var(--paper);
+			border: 1px solid var(--line);
+			border-radius: 8px;
+			overflow: hidden;
+		}
+
+		.section-title {
+			margin: 0;
+			padding: 14px 18px;
+			background: #edf1f7;
+			border-bottom: 1px solid var(--line);
+			font-size: 20px;
+			line-height: 1.35;
+		}
+
+		.table-wrap {
+			overflow-x: auto;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			min-width: 720px;
+		}
+
+		th,
+		td {
+			padding: 11px 13px;
+			border-bottom: 1px solid var(--line);
+			text-align: left;
+			vertical-align: top;
+		}
+
+		th {
+			background: #f8f9fc;
+			color: #3b4350;
+			font-size: 13px;
+			text-transform: uppercase;
+		}
+
+		tbody tr:nth-child(even) {
+			background: var(--row);
+		}
+
+		tbody tr:last-child td {
+			border-bottom: 0;
+		}
+
+		.col-act {
+			width: 130px;
+			font-weight: 700;
+		}
+
+		.col-zone {
+			width: 34%;
+			font-weight: 600;
+		}
+
+		.tag {
+			display: inline-block;
+			min-width: 110px;
+			padding: 4px 9px;
+			border-radius: 999px;
+			text-align: center;
+			font-size: 13px;
+			font-weight: 700;
+		}
+
+		.currency {
+			background: var(--currency);
+			color: #245a96;
+		}
+
+		.skill,
+		.support,
+		.spirit {
+			background: var(--gem);
+			color: #247147;
+		}
+
+		.equipment {
+			background: var(--equipment);
+			color: #9b4937;
+		}
+
+		.rune {
+			background: var(--rune);
+			color: #60459a;
+		}
+
+		.note {
+			margin-top: 18px;
+			color: var(--muted);
+			font-size: 14px;
+		}
+
+		.source {
+			margin-top: 24px;
+			padding: 14px 16px;
+			background: var(--paper);
+			border: 1px solid var(--line);
+			border-radius: 8px;
+			color: var(--muted);
+			font-size: 14px;
+		}
+
+		.source a {
+			color: #2d64a5;
+			font-weight: 700;
+		}
+
+		@media (max-width: 760px) {
+			.page {
+				padding: 18px 12px 34px;
+			}
+
+			.report-header {
+				padding: 22px 18px;
+			}
+
+			h1 {
+				font-size: 24px;
+			}
+
+			.meta {
+				grid-template-columns: 1fr;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main class="page">
+		<header class="report-header">
+			<h1>POE2 Campaign League Mechanic Rewards</h1>
+			<p class="subtitle">รายงานสรุป Act, Map / Zone และไอเทมที่ดรอปจาก League Mechanic ใน Campaign</p>
+		</header>
+
+		<section class="meta" aria-label="ข้อมูลรายงาน">
+			<div class="meta-box">
+				<span class="meta-label">เกม</span>
+				<span class="meta-value">Path of Exile 2</span>
+			</div>
+			<div class="meta-box">
+				<span class="meta-label">ประเภทข้อมูล</span>
+				<span class="meta-value">Campaign League Mechanic Rewards</span>
+			</div>
+			<div class="meta-box">
+				<span class="meta-label">วันที่อ้างอิงข้อมูล</span>
+				<span class="meta-value">18 พฤษภาคม 2026</span>
+			</div>
+		</section>
+
+		<section class="summary">
+			<p>ตารางนี้รวบรวมรางวัลที่ระบุว่าได้รับจาก League Mechanic ในแต่ละโซนของ Campaign โดยรางวัลประเภท Random จะสุ่มรายละเอียดภายในประเภทนั้น เช่น Rune, Unique Item, Ring, Charm หรือ Jewel</p>
+		</section>
+
+		<section class="section">
+			<h2 class="section-title">Act 1</h2>
+			<div class="table-wrap">
+				<table>
+					<thead>
+						<tr><th>Act</th><th>Map / Zone</th><th>ประเภท</th><th>ไอเทมที่ดรอป</th></tr>
+					</thead>
+					<tbody>
+						<tr><td class="col-act">Act 1</td><td class="col-zone">Clearfell</td><td><span class="tag currency">Currency</span></td><td>Orb of Transmutation</td></tr>
+						<tr><td class="col-act">Act 1</td><td class="col-zone">Mud Burrow</td><td><span class="tag currency">Currency</span></td><td>Orb of Augmentation</td></tr>
+						<tr><td class="col-act">Act 1</td><td class="col-zone">Grelwood</td><td><span class="tag currency">Currency</span></td><td>Orb of Transmutation</td></tr>
+						<tr><td class="col-act">Act 1</td><td class="col-zone">Red Vale</td><td><span class="tag skill">Skill Gem</span></td><td>Level 2 Uncut Skill Gem</td></tr>
+						<tr><td class="col-act">Act 1</td><td class="col-zone">Grim Tangle</td><td><span class="tag skill">Skill Gem</span></td><td>Level 3 Uncut Skill Gem</td></tr>
+						<tr><td class="col-act">Act 1</td><td class="col-zone">Cemetery</td><td><span class="tag currency">Currency</span></td><td>Regal Orb</td></tr>
+						<tr><td class="col-act">Act 1</td><td class="col-zone">Tomb of the Consort</td><td><span class="tag equipment">Equipment</span></td><td>Random Normal Rarity Amulet</td></tr>
+						<tr><td class="col-act">Act 1</td><td class="col-zone">Mausoleum of the Praetor</td><td><span class="tag rune">Rune</span></td><td>Random Lesser Rune</td></tr>
+						<tr><td class="col-act">Act 1</td><td class="col-zone">Hunting Grounds</td><td><span class="tag currency">Currency</span></td><td>Exalted Orb</td></tr>
+						<tr><td class="col-act">Act 1</td><td class="col-zone">Freythorn</td><td><span class="tag support">Support Gem</span></td><td>Level 1 Uncut Support Gem</td></tr>
+						<tr><td class="col-act">Act 1</td><td class="col-zone">Ogham Farmlands</td><td><span class="tag skill">Skill Gem</span></td><td>Level 4 Uncut Skill Gem</td></tr>
+						<tr><td class="col-act">Act 1</td><td class="col-zone">Ogham Village</td><td><span class="tag currency">Currency</span></td><td>Artificer's Orb</td></tr>
+						<tr><td class="col-act">Act 1</td><td class="col-zone">The Manor Ramparts</td><td><span class="tag skill">Skill Gem</span></td><td>Level 5 Uncut Skill Gem</td></tr>
+						<tr><td class="col-act">Act 1</td><td class="col-zone">Ogham Manor</td><td><span class="tag currency">Currency</span></td><td>Alchemy Orb</td></tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<section class="section">
+			<h2 class="section-title">Act 2</h2>
+			<div class="table-wrap">
+				<table>
+					<thead>
+						<tr><th>Act</th><th>Map / Zone</th><th>ประเภท</th><th>ไอเทมที่ดรอป</th></tr>
+					</thead>
+					<tbody>
+						<tr><td class="col-act">Act 2</td><td class="col-zone">Vastiri Outskirts</td><td><span class="tag currency">Currency</span></td><td>Exalted Orbs</td></tr>
+						<tr><td class="col-act">Act 2</td><td class="col-zone">Mawdun Quarry</td><td><span class="tag spirit">Spirit Gem</span></td><td>Level 5 Uncut Spirit Gem</td></tr>
+						<tr><td class="col-act">Act 2</td><td class="col-zone">Traitor's Passage</td><td><span class="tag currency">Currency</span></td><td>Artificer's Orb</td></tr>
+						<tr><td class="col-act">Act 2</td><td class="col-zone">Halani Gates</td><td><span class="tag currency">Currency</span></td><td>Exalted Orb</td></tr>
+						<tr><td class="col-act">Act 2</td><td class="col-zone">Mastodon Badlands</td><td><span class="tag currency">Currency</span></td><td>Regal Orb</td></tr>
+						<tr><td class="col-act">Act 2</td><td class="col-zone">The Bone Pits</td><td><span class="tag currency">Currency</span></td><td>Exalted Orb</td></tr>
+						<tr><td class="col-act">Act 2</td><td class="col-zone">Keth</td><td><span class="tag currency">Currency</span></td><td>Gemcutter's Prism</td></tr>
+						<tr><td class="col-act">Act 2</td><td class="col-zone">The Lost City</td><td><span class="tag currency">Currency</span></td><td>Orb of Alchemy</td></tr>
+						<tr><td class="col-act">Act 2</td><td class="col-zone">Buried Shrines</td><td><span class="tag currency">Currency</span></td><td>Lesser Jeweller's Orb</td></tr>
+						<tr><td class="col-act">Act 2</td><td class="col-zone">Valley of the Titans</td><td><span class="tag equipment">Equipment</span></td><td>Random Unique Item</td></tr>
+						<tr><td class="col-act">Act 2</td><td class="col-zone">The Titan Grotto</td><td><span class="tag currency">Currency</span></td><td>Chance Shard</td></tr>
+						<tr><td class="col-act">Act 2</td><td class="col-zone">Deshar</td><td><span class="tag rune">Rune</span></td><td>Random Rune</td></tr>
+						<tr><td class="col-act">Act 2</td><td class="col-zone">Spires of Deshar</td><td><span class="tag currency">Currency</span></td><td>Gemcutter's Prism</td></tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<section class="section">
+			<h2 class="section-title">Act 3</h2>
+			<div class="table-wrap">
+				<table>
+					<thead>
+						<tr><th>Act</th><th>Map / Zone</th><th>ประเภท</th><th>ไอเทมที่ดรอป</th></tr>
+					</thead>
+					<tbody>
+						<tr><td class="col-act">Act 3</td><td class="col-zone">Sandswept Marsh</td><td><span class="tag support">Support Gem</span></td><td>Level 3 Uncut Support Gem</td></tr>
+						<tr><td class="col-act">Act 3</td><td class="col-zone">Jungle Ruins</td><td><span class="tag currency">Currency</span></td><td>Orb of Alchemy</td></tr>
+						<tr><td class="col-act">Act 3</td><td class="col-zone">Venom Crypts</td><td><span class="tag equipment">Equipment</span></td><td>Random Ring</td></tr>
+						<tr><td class="col-act">Act 3</td><td class="col-zone">Infested Barrens</td><td><span class="tag currency">Currency</span></td><td>Exalted Orb</td></tr>
+						<tr><td class="col-act">Act 3</td><td class="col-zone">The Azak Bog</td><td><span class="tag rune">Rune</span></td><td>Random Rune</td></tr>
+						<tr><td class="col-act">Act 3</td><td class="col-zone">Chimeral Wetlands</td><td><span class="tag skill">Skill Gem</span></td><td>Level 9 Uncut Skill Gem</td></tr>
+						<tr><td class="col-act">Act 3</td><td class="col-zone">Jiquani's Machinarium</td><td><span class="tag currency">Currency</span></td><td>Artificer's Orb</td></tr>
+						<tr><td class="col-act">Act 3</td><td class="col-zone">Jiquani's Sanctum</td><td><span class="tag currency">Currency</span></td><td>Exalted Orb</td></tr>
+						<tr><td class="col-act">Act 3</td><td class="col-zone">Matlan Waterways</td><td><span class="tag spirit">Spirit Gem</span></td><td>Level 10 Uncut Spirit Gem</td></tr>
+						<tr><td class="col-act">Act 3</td><td class="col-zone">Drowned City</td><td><span class="tag support">Support Gem</span></td><td>Level 3 Uncut Support Gem</td></tr>
+						<tr><td class="col-act">Act 3</td><td class="col-zone">Molten Vault</td><td><span class="tag equipment">Equipment</span></td><td>Random Unique Item</td></tr>
+						<tr><td class="col-act">Act 3</td><td class="col-zone">Apex of Filth</td><td><span class="tag currency">Currency</span></td><td>Vaal Orb</td></tr>
+						<tr><td class="col-act">Act 3</td><td class="col-zone">Temple of Kopec</td><td><span class="tag spirit">Spirit Gem</span></td><td>Level 11 Uncut Spirit Gem</td></tr>
+						<tr><td class="col-act">Act 3</td><td class="col-zone">Utzaal</td><td><span class="tag equipment">Equipment</span></td><td>Random Jewel or Time-Lost Jewel</td></tr>
+						<tr><td class="col-act">Act 3</td><td class="col-zone">The Black Chambers</td><td><span class="tag currency">Currency</span></td><td>Vaal Orb</td></tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<section class="section">
+			<h2 class="section-title">Act 4</h2>
+			<div class="table-wrap">
+				<table>
+					<thead>
+						<tr><th>Act</th><th>Map / Zone</th><th>ประเภท</th><th>ไอเทมที่ดรอป</th></tr>
+					</thead>
+					<tbody>
+						<tr><td class="col-act">Act 4</td><td class="col-zone">Isle of Kin</td><td><span class="tag currency">Currency</span></td><td>Gemcutter's Prism</td></tr>
+						<tr><td class="col-act">Act 4</td><td class="col-zone">Volcanic Warrens</td><td><span class="tag support">Support Gem</span></td><td>Level 4 Uncut Support Gem</td></tr>
+						<tr><td class="col-act">Act 4</td><td class="col-zone">Abandoned Prison</td><td><span class="tag currency">Currency</span></td><td>Exalted Orb</td></tr>
+						<tr><td class="col-act">Act 4</td><td class="col-zone">Solitary Confinement</td><td><span class="tag rune">Rune</span></td><td>Random Rune</td></tr>
+						<tr><td class="col-act">Act 4</td><td class="col-zone">Whakapanu Island</td><td><span class="tag currency">Currency</span></td><td>Artificer's Orb</td></tr>
+						<tr><td class="col-act">Act 4</td><td class="col-zone">Singing Caverns</td><td><span class="tag equipment">Equipment</span></td><td>Random Charm</td></tr>
+						<tr><td class="col-act">Act 4</td><td class="col-zone">Shrike Island</td><td><span class="tag support">Support Gem</span></td><td>Level 4 Uncut Support Gem</td></tr>
+						<tr><td class="col-act">Act 4</td><td class="col-zone">Kedge Bay</td><td><span class="tag currency">Currency</span></td><td>Exalted Orb</td></tr>
+						<tr><td class="col-act">Act 4</td><td class="col-zone">Journey's End</td><td><span class="tag currency">Currency</span></td><td>Alchemy Orb</td></tr>
+						<tr><td class="col-act">Act 4</td><td class="col-zone">Eye of Hinekora</td><td><span class="tag currency">Currency</span></td><td>Chaos Orb</td></tr>
+						<tr><td class="col-act">Act 4</td><td class="col-zone">Halls of the Dead</td><td><span class="tag rune">Rune</span></td><td>Random Rune</td></tr>
+						<tr><td class="col-act">Act 4</td><td class="col-zone">Arastas</td><td><span class="tag skill">Skill Gem</span></td><td>Level 12 Uncut Skill Gem</td></tr>
+						<tr><td class="col-act">Act 4</td><td class="col-zone">The Excavation</td><td><span class="tag equipment">Equipment</span></td><td>Random Rare Amulet</td></tr>
+						<tr><td class="col-act">Act 4</td><td class="col-zone">Ngakanu</td><td><span class="tag currency">Currency</span></td><td>Greater Jeweller's Orb</td></tr>
+						<tr><td class="col-act">Act 4</td><td class="col-zone">Heart of the Tribe</td><td><span class="tag spirit">Spirit Gem</span></td><td>Level 12 Uncut Spirit Gem</td></tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<section class="section">
+			<h2 class="section-title">Interlude</h2>
+			<div class="table-wrap">
+				<table>
+					<thead>
+						<tr><th>Act</th><th>Map / Zone</th><th>ประเภท</th><th>ไอเทมที่ดรอป</th></tr>
+					</thead>
+					<tbody>
+						<tr><td class="col-act">A1 Interlude</td><td class="col-zone">Scorched Farmlands</td><td><span class="tag support">Support Gem</span></td><td>Level 4 Uncut Support Gem</td></tr>
+						<tr><td class="col-act">A1 Interlude</td><td class="col-zone">Stones of Serle</td><td><span class="tag currency">Currency</span></td><td>Exalted Orb</td></tr>
+						<tr><td class="col-act">A1 Interlude</td><td class="col-zone">The Blackwood</td><td><span class="tag currency">Currency</span></td><td>Greater Orb of Transmutation</td></tr>
+						<tr><td class="col-act">A1 Interlude</td><td class="col-zone">Holten</td><td><span class="tag rune">Rune</span></td><td>Random Greater Rune</td></tr>
+						<tr><td class="col-act">A1 Interlude</td><td class="col-zone">Wolvenhold</td><td><span class="tag currency">Currency</span></td><td>Greater Orb of Augmentation</td></tr>
+						<tr><td class="col-act">A1 Interlude</td><td class="col-zone">Holten Estate</td><td><span class="tag currency">Currency</span></td><td>Artificer's Orb</td></tr>
+						<tr><td class="col-act">A2 Interlude</td><td class="col-zone">The Khari Crossing</td><td><span class="tag currency">Currency</span></td><td>Gemcutter's Prism</td></tr>
+						<tr><td class="col-act">A2 Interlude</td><td class="col-zone">Pools of Khatal</td><td><span class="tag currency">Currency</span></td><td>Alchemy Orb</td></tr>
+						<tr><td class="col-act">A2 Interlude</td><td class="col-zone">Sel Khari Sanctuary</td><td><span class="tag currency">Currency</span></td><td>Orb of Chance</td></tr>
+						<tr><td class="col-act">A2 Interlude</td><td class="col-zone">The Galai Gates</td><td><span class="tag currency">Currency</span></td><td>Greater Orb of Augmentation</td></tr>
+						<tr><td class="col-act">A2 Interlude</td><td class="col-zone">Qimah</td><td><span class="tag currency">Currency</span></td><td>Exalted Orb</td></tr>
+						<tr><td class="col-act">A2 Interlude</td><td class="col-zone">Qimah Reservoir</td><td><span class="tag currency">Currency</span></td><td>Greater Orb of Transmutation</td></tr>
+						<tr><td class="col-act">A3 Interlude</td><td class="col-zone">Ashen Forest</td><td><span class="tag equipment">Equipment</span></td><td>Random Rare Belt</td></tr>
+						<tr><td class="col-act">A3 Interlude</td><td class="col-zone">Kirar Village</td><td><span class="tag rune">Rune</span></td><td>Random Greater Rune</td></tr>
+						<tr><td class="col-act">A3 Interlude</td><td class="col-zone">Glacial Tarn</td><td><span class="tag currency">Currency</span></td><td>Greater Orb of Augmentation</td></tr>
+						<tr><td class="col-act">A3 Interlude</td><td class="col-zone">Howling Caves</td><td><span class="tag currency">Currency</span></td><td>Chaos Orb</td></tr>
+						<tr><td class="col-act">A3 Interlude</td><td class="col-zone">Kirar Peaks</td><td><span class="tag currency">Currency</span></td><td>Greater Orb of Transmutation</td></tr>
+						<tr><td class="col-act">A3 Interlude</td><td class="col-zone">Etched Ravine</td><td><span class="tag currency">Currency</span></td><td>Exalted Orb</td></tr>
+						<tr><td class="col-act">A3 Interlude</td><td class="col-zone">The Cuachic Vault</td><td><span class="tag currency">Currency</span></td><td>Vaal Orb</td></tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<p class="note">หมายเหตุ: ข้อมูล League Mechanic และรางวัลใน POE2 อาจเปลี่ยนได้ตามแพตช์ของเกม ควรตรวจสอบอีกครั้งเมื่อมีอัปเดตใหญ่หรือเปลี่ยน League</p>
+
+		<footer class="source">
+			แหล่งข้อมูล:
+			<a href="https://vulkk.com/2026/05/18/path-of-exile-2-campaign-league-mechanic-rewards/" target="_blank" rel="noopener">VULKK - Path of Exile 2 Campaign League Mechanic Rewards List</a>
+		</footer>
+	</main>
+</body>
+</html>

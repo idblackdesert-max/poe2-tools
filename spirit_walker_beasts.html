@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spirit Walker — Beast Companion Guide (0.5)</title>
+<style>
+  :root {
+    --bg: #0e0e12;
+    --card: #16161e;
+    --card2: #1c1c26;
+    --border: #2a2a3a;
+    --text: #d4d4e8;
+    --muted: #7070a0;
+    --accent: #7c6af7;
+    --green: #4ade80;
+    --teal: #2dd4bf;
+    --orange: #fb923c;
+    --red: #f87171;
+    --yellow: #facc15;
+    --blue: #60a5fa;
+    --pink: #f472b6;
+    --s: #ff6b6b;
+    --a: #ffa94d;
+    --b: #69db7c;
+    --c: #74c0fc;
+    --d: #adb5bd;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
+
+  /* NAV */
+  nav { background: #0a0a10; border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; position: sticky; top: 0; z-index: 100; }
+  nav .brand { font-size: 16px; font-weight: 700; color: var(--accent); }
+  nav a { color: var(--muted); text-decoration: none; font-size: 13px; padding: 4px 10px; border-radius: 4px; transition: .2s; }
+  nav a:hover { color: var(--text); background: var(--card); }
+  nav a.active { color: var(--teal); }
+
+  /* HERO */
+  .hero { background: linear-gradient(135deg, #0f0f1a 0%, #1a1028 50%, #0f1a1a 100%); padding: 40px 24px; text-align: center; border-bottom: 1px solid var(--border); }
+  .hero h1 { font-size: 28px; font-weight: 800; color: var(--teal); margin-bottom: 8px; }
+  .hero p { color: var(--muted); max-width: 600px; margin: 0 auto; }
+
+  /* MAIN */
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+
+  /* SECTION */
+  section { margin-bottom: 40px; }
+  .section-title { font-size: 20px; font-weight: 700; color: var(--accent); border-left: 4px solid var(--accent); padding-left: 12px; margin-bottom: 16px; }
+  .section-title span { font-size: 13px; font-weight: 400; color: var(--muted); margin-left: 8px; }
+
+  /* TIER BADGE */
+  .tier { display: inline-block; padding: 2px 10px; border-radius: 4px; font-size: 12px; font-weight: 700; letter-spacing: 1px; }
+  .tier-S { background: rgba(255,107,107,.2); color: var(--s); border: 1px solid var(--s); }
+  .tier-A { background: rgba(255,169,77,.15); color: var(--a); border: 1px solid var(--a); }
+  .tier-B { background: rgba(105,219,124,.15); color: var(--b); border: 1px solid var(--b); }
+  .tier-C { background: rgba(116,192,252,.15); color: var(--c); border: 1px solid var(--c); }
+  .tier-D { background: rgba(173,181,189,.15); color: var(--d); border: 1px solid var(--d); }
+
+  /* BEAST CARD */
+  .beast-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+  .beast-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; transition: border-color .2s; }
+  .beast-card:hover { border-color: var(--accent); }
+  .beast-card.s-tier { border-color: rgba(255,107,107,.4); }
+  .beast-card.a-tier { border-color: rgba(255,169,77,.3); }
+
+  .beast-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .beast-name { font-size: 15px; font-weight: 700; color: var(--yellow); }
+  .beast-loc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .beast-loc .area { color: var(--teal); }
+
+  .beast-stats { display: flex; gap: 10px; margin: 10px 0; flex-wrap: wrap; }
+  .stat-pill { background: var(--card2); border: 1px solid var(--border); border-radius: 20px; padding: 3px 10px; font-size: 12px; }
+  .stat-pill .label { color: var(--muted); margin-right: 4px; }
+  .stat-pill .val { color: var(--text); font-weight: 600; }
+  .stat-pill .val.high { color: var(--orange); }
+  .stat-pill .val.vhigh { color: var(--red); }
+
+  .beast-skills { margin-top: 10px; }
+  .skill-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 4px; }
+  .skill-tag { display: inline-block; background: rgba(124,106,247,.15); border: 1px solid rgba(124,106,247,.3); color: var(--accent); border-radius: 4px; padding: 2px 8px; font-size: 12px; margin: 2px 3px 2px 0; }
+  .skill-tag.aura { background: rgba(250,204,21,.1); border-color: rgba(250,204,21,.3); color: var(--yellow); }
+  .skill-tag.buff { background: rgba(45,212,191,.1); border-color: rgba(45,212,191,.3); color: var(--teal); }
+  .skill-tag.debuff { background: rgba(248,113,113,.1); border-color: rgba(248,113,113,.3); color: var(--red); }
+  .skill-tag.warn { background: rgba(173,181,189,.1); border-color: rgba(173,181,189,.3); color: var(--d); }
+
+  .beast-note { background: var(--card2); border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0; padding: 8px 12px; margin-top: 10px; font-size: 13px; color: var(--muted); }
+  .beast-note strong { color: var(--text); }
+  .beast-note.recommend { border-color: var(--teal); }
+  .beast-note.warn-note { border-color: var(--red); }
+
+  /* MOD TABLE */
+  .mod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+  .mod-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .mod-card.top { border-color: rgba(250,204,21,.4); }
+  .mod-name { font-size: 14px; font-weight: 700; color: var(--yellow); margin-bottom: 6px; }
+  .mod-effect { font-size: 13px; color: var(--text); margin-bottom: 6px; }
+  .mod-rating { font-size: 12px; }
+
+  /* SPIRIT COST TABLE */
+  .table-wrapper { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: var(--card2); color: var(--muted); text-align: left; padding: 8px 12px; border-bottom: 2px solid var(--border); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  tr:hover td { background: rgba(255,255,255,.02); }
+  td.name { color: var(--yellow); font-weight: 600; }
+  td.loc { color: var(--teal); }
+  td.tier-cell { font-weight: 700; text-align: center; }
+
+  /* QUICK REF */
+  .quick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+  .quick-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .quick-card h4 { color: var(--teal); font-size: 14px; margin-bottom: 8px; }
+  .quick-card ul { list-style: none; }
+  .quick-card ul li { padding: 3px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--muted); }
+  .quick-card ul li:last-child { border-bottom: none; }
+  .quick-card ul li strong { color: var(--text); }
+
+  /* ACT LABEL */
+  .act-label { display: inline-block; background: rgba(124,106,247,.15); color: var(--accent); border: 1px solid rgba(124,106,247,.3); border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 32px 0; }
+
+  /* SPIRIT COST BAR */
+  .spirit-bar { display: flex; align-items: center; gap: 6px; font-size: 12px; margin-top: 6px; }
+  .spirit-bar .bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; }
+  .spirit-bar .fill { height: 100%; border-radius: 2px; background: var(--accent); }
+  .spirit-bar .cost { color: var(--accent); font-weight: 600; min-width: 40px; text-align: right; }
+
+  /* FOOTER */
+  footer { text-align: center; padding: 24px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--border); margin-top: 40px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="brand">🌿 Spirit Walker Beast Guide</span>
+  <a href="#mods">Modifiers</a>
+  <a href="#campaign">Campaign</a>
+  <a href="#trial">Trial/Endgame</a>
+  <a href="#maps">Maps</a>
+  <a href="#regular">Regular Beasts</a>
+  <a href="#quickref">Quick Ref</a>
+  <a href="spirit_walker_guide.html" style="margin-left:auto; color: var(--teal);">← Main Guide</a>
+</nav>
+
+<div class="hero">
+  <h1>Beast Companion Database</h1>
+  <p>Patch 0.5 — Runes of Aldur League | ข้อมูล Tameable Beasts ทั้งหมด แบ่งตาม Act/Tier พร้อม Modifiers และคำแนะนำสำหรับ Spirit Walker</p>
+</div>
+
+<main>
+
+<!-- ===== TAME BEAST MECHANIC ===== -->
+<section>
+  <div class="section-title">วิธี Tame Beast</div>
+  <div class="quick-grid">
+    <div class="quick-card">
+      <h4>ขั้นตอน</h4>
+      <ul>
+        <li><strong>1.</strong> หา Rare Beast ที่ต้องการ</li>
+        <li><strong>2.</strong> Cast Tame Beast → Hinder beast</li>
+        <li><strong>3.</strong> สู้จน HP ต่ำ → Kill ขณะ Hindered</li>
+        <li><strong>4.</strong> Beast กลายเป็น Companion</li>
+        <li><strong>5.</strong> Summon ได้ทุกเวลา (ใช้ Spirit)</li>
+      </ul>
+    </div>
+    <div class="quick-card">
+      <h4>Gem Requirements</h4>
+      <ul>
+        <li><strong>Tame Beast</strong> — Gem Skill LVL 7+</li>
+        <li><strong>Summon Beast</strong> — Summon จาก Stash</li>
+        <li><strong>Natural Order</strong> (Ascendancy) — จับ Unique Bosses</li>
+        <li>Beast เก็บ Modifiers ได้สูงสุด <strong>4 mods</strong></li>
+      </ul>
+    </div>
+    <div class="quick-card">
+      <h4>Spirit Cost ตาม Base Type</h4>
+      <ul>
+        <li>Small beasts (Abyss Fish ฯลฯ) — <strong>30</strong></li>
+        <li>Medium beasts (Alpha Primate ฯลฯ) — <strong>90</strong></li>
+        <li>Large beasts (Gorilla/Tortoise) — <strong>130</strong></li>
+        <li>Boss beasts (Crested Behemoth+) — <strong>170+</strong></li>
+      </ul>
+    </div>
+    <div class="quick-card">
+      <h4>คำแนะนำ Spirit Walker</h4>
+      <ul>
+        <li>ใช้ <strong>Trusted Kinship</strong> → +1 Companion slot</li>
+        <li>Beast ที่มี <strong>Haste Aura</strong> = top priority</li>
+        <li>Boss Beasts มี base stats สูงกว่า regular beasts</li>
+        <li>ต้องการ <strong>Natural Order</strong> ถ้าจะจับ Act Bosses</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BEST MODIFIERS ===== -->
+<section id="mods">
+  <div class="section-title">Beast Modifiers <span>— สิ่งที่ต้องการบน Rare Beast</span></div>
+  <div class="mod-grid">
+
+    <div class="mod-card top">
+      <div class="mod-name">⚡ Haste Aura</div>
+      <div class="mod-effect">+20% Attack/Cast Speed และ +10% Movement Speed ให้ allies ในรัศมี</div>
+      <div class="mod-rating"><span class="tier tier-S">S</span> <span style="color:var(--muted); margin-left:6px;">อยากได้ทุก build ที่เล่น</span></div>
+    </div>
+
+    <div class="mod-card top">
+      <div class="mod-name">⏱ Temporal Bubble</div>
+      <div class="mod-effect">สร้าง bubble รอบตัว — ศัตรูใน bubble ช้าลง 30%</div>
+      <div class="mod-rating"><span class="tier tier-S">S</span> <span style="color:var(--muted); margin-left:6px;">ใช้ burst damage + safety</span></div>
+    </div>
+
+    <div class="mod-card top">
+      <div class="mod-name">🛡 Elemental Resistance Aura</div>
+      <div class="mod-effect">+35% All Elemental Resistances ให้ nearby allies</div>
+      <div class="mod-rating"><span class="tier tier-A">A</span> <span style="color:var(--muted); margin-left:6px;">ช่วยแก้ resist ที่ขาด</span></div>
+    </div>
+
+    <div class="mod-card">
+      <div class="mod-name">🔋 Energy Shield Aura</div>
+      <div class="mod-effect">+20% of Max Life as Energy Shield ให้ nearby allies</div>
+      <div class="mod-rating"><span class="tier tier-A">A</span> <span style="color:var(--muted); margin-left:6px;">เพิ่ม buffer EHP</span></div>
+    </div>
+
+    <div class="mod-card">
+      <div class="mod-name">🔥 Physical → Extra Fire Damage</div>
+      <div class="mod-effect">Gains X% of Physical Damage as Extra Fire Damage (stack ได้ถึง 80%)</div>
+      <div class="mod-rating"><span class="tier tier-A">A</span> <span style="color:var(--muted); margin-left:6px;">ดีถ้าจะ Ignite/Infernal Legion</span></div>
+    </div>
+
+    <div class="mod-card">
+      <div class="mod-name">💉 Infernal Legion (Aura)</div>
+      <div class="mod-effect">Fire DoT รอบตัว Beast ตาม Max Life — ยิ่งจับ beast HP เยอะ ยิ่งแรง</div>
+      <div class="mod-rating"><span class="tier tier-A">A</span> <span style="color:var(--muted); margin-left:6px;">ต้องการ Beast มี HP สูง</span></div>
+    </div>
+
+    <div class="mod-card">
+      <div class="mod-name">💪 Extra Life</div>
+      <div class="mod-effect">+X% Life ให้ Beast เอง — ทำให้ Beast อยู่รอดได้นานขึ้น</div>
+      <div class="mod-rating"><span class="tier tier-B">B</span> <span style="color:var(--muted); margin-left:6px;">Stack กับ base life ของ boss</span></div>
+    </div>
+
+    <div class="mod-card">
+      <div class="mod-name">⚔ Rallying Cry</div>
+      <div class="mod-effect">Beast Rallies nearby allies — temporary buff to attack speed/damage</div>
+      <div class="mod-rating"><span class="tier tier-B">B</span> <span style="color:var(--muted); margin-left:6px;">ใช้ช่วง burst สูงสุด</span></div>
+    </div>
+
+    <div class="mod-card">
+      <div class="mod-name">🌩 Shocking Ground / Cold Exposure</div>
+      <div class="mod-effect">สร้าง Shocking Ground / Cold Exposure ใต้ศัตรู — debuff ป้องกัน</div>
+      <div class="mod-rating"><span class="tier tier-B">B</span> <span style="color:var(--muted); margin-left:6px;">ช่วย elemental scaling</span></div>
+    </div>
+
+    <div class="mod-card">
+      <div class="mod-name">🔄 Periodic Invulnerability Aura</div>
+      <div class="mod-effect">Beast มี brief invulnerability windows เป็นระยะ — ยากตาย</div>
+      <div class="mod-rating"><span class="tier tier-B">B</span> <span style="color:var(--muted); margin-left:6px;">ทำให้ beast อยู่ได้ใน endgame</span></div>
+    </div>
+
+    <div class="mod-card">
+      <div class="mod-name">⚡ Soul Eater</div>
+      <div class="mod-effect">Beast กิน soul ของศัตรูที่ตาย — stack speed/damage เรื่อยๆ</div>
+      <div class="mod-rating"><span class="tier tier-A">A</span> <span style="color:var(--muted); margin-left:6px;">แรงมากใน pack clear</span></div>
+    </div>
+
+    <div class="mod-card" style="opacity:.6;">
+      <div class="mod-name">❌ Fleshpierce / Bloodgulp Aura (Nerfed)</div>
+      <div class="mod-effect">Physical Damage Aura + Haste Aura ที่ Fleshpierce/Bloodgulp เคยมี</div>
+      <div class="mod-rating"><span class="tier tier-D">NERFED</span> <span style="color:var(--muted); margin-left:6px;">Aura ถูก disable ใน 0.3.0b แล้ว</span></div>
+    </div>
+
+  </div>
+  <div style="margin-top:14px; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:14px; font-size:13px;">
+    <strong style="color:var(--yellow);">💡 Priority สำหรับ Spirit Walker:</strong>
+    <span style="color:var(--muted); margin-left:8px;">Haste Aura &gt; Temporal Bubble &gt; Elemental Resistance Aura &gt; Soul Eater — จับ beast ที่มี 2-3 mods เหล่านี้คือ jackpot</span>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== CAMPAIGN BEASTS ===== -->
+<section id="campaign">
+  <div class="section-title">Campaign Beasts <span>— Act 1–4</span></div>
+
+  <!-- ACT 1 -->
+  <div class="act-label">Act 1</div>
+  <div class="beast-grid" style="margin-bottom: 24px;">
+
+    <div class="beast-card">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">The Crowbell</div>
+          <div class="beast-loc">📍 <span class="area">Hunting Grounds</span></div>
+        </div>
+        <span class="tier tier-B">B</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Life</span><span class="val">~200%</span></div>
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Melee AoE</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag">Bell Slam</span>
+        <span class="skill-tag">Melee AoE</span>
+      </div>
+      <div class="beast-note">Act 1 option ดีที่สุดถ้าต้องการ beast ก่อน Act 3 แต่จะ replace ทีหลัง</div>
+    </div>
+
+    <div class="beast-card">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">The Devourer</div>
+          <div class="beast-loc">📍 <span class="area">Mud Burrow</span></div>
+        </div>
+        <span class="tier tier-C">C</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Life</span><span class="val">115%</span></div>
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Burrowing</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag warn">Burrows underground</span>
+        <span class="skill-tag">Bite</span>
+      </div>
+      <div class="beast-note warn-note"><strong>ไม่แนะนำ</strong> — บุ่มใต้ดิน deal damage ยาก + stats ต่ำ</div>
+    </div>
+
+    <div class="beast-card">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Count Geonor</div>
+          <div class="beast-loc">📍 <span class="area">The Iron Manor (Act 1 Boss)</span></div>
+        </div>
+        <span class="tier tier-S">S</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Wolf Transform</span></div>
+        <div class="stat-pill"><span class="label">Element</span><span class="val" style="color:var(--blue);">Cold</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag">Ice Spear</span>
+        <span class="skill-tag">Wolf Form</span>
+        <span class="skill-tag">Cold Dash</span>
+      </div>
+      <div class="beast-note recommend"><strong>⚠️ ต้องการ Natural Order</strong> — Ascendancy node จึงจะจับ Act Boss ได้ | สวยงาม แต่ unlock ช้า</div>
+    </div>
+
+  </div>
+
+  <!-- ACT 2 -->
+  <div class="act-label">Act 2</div>
+  <div class="beast-grid" style="margin-bottom: 24px;">
+
+    <div class="beast-card">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Ekbab, Ancient Steed</div>
+          <div class="beast-loc">📍 <span class="area">The Bone Pits</span></div>
+        </div>
+        <span class="tier tier-C">C</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Life</span><span class="val">200%</span></div>
+        <div class="stat-pill"><span class="label">Dmg</span><span class="val">270%</span></div>
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Melee</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag">Stomp</span>
+        <span class="skill-tag">Charge</span>
+        <span class="skill-tag warn">Slow movement</span>
+      </div>
+      <div class="beast-note">Pure melee, life สูงพอใช้ได้ แต่ slow มาก — ไม่ ideal สำหรับ pack clear</div>
+    </div>
+
+    <div class="beast-card">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Rathbreaker</div>
+          <div class="beast-loc">📍 <span class="area">Vastiri Outskirts</span></div>
+        </div>
+        <span class="tier tier-C">C</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Ranged</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag">Arrow Strike</span>
+        <span class="skill-tag">Barrage</span>
+      </div>
+      <div class="beast-note">Ranged beast — ไม่ค่อย follow player, replace เมื่อเข้า Act 3</div>
+    </div>
+
+    <div class="beast-card">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Constrictor Queen Kabala</div>
+          <div class="beast-loc">📍 <span class="area">Lost City of Keth</span></div>
+        </div>
+        <span class="tier tier-B">B</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Ranged + Summons</span></div>
+        <div class="stat-pill"><span class="label">Element</span><span class="val" style="color:var(--green);">Poison</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag">Constrict</span>
+        <span class="skill-tag">Venom Spit</span>
+        <span class="skill-tag">Summons Snakes</span>
+      </div>
+      <div class="beast-note recommend">Act 2 ที่ดีที่สุด — Summons ช่วย distract enemies ทำให้ survive ได้ดี</div>
+    </div>
+
+  </div>
+
+  <!-- ACT 3 -->
+  <div class="act-label">Act 3 — Prime Targets</div>
+  <div class="beast-grid" style="margin-bottom: 24px;">
+
+    <div class="beast-card s-tier">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Mighty Silverfist ⭐</div>
+          <div class="beast-loc">📍 <span class="area">Jungle Ruins</span></div>
+        </div>
+        <span class="tier tier-S">S</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Life</span><span class="val high">250%</span></div>
+        <div class="stat-pill"><span class="label">Dmg</span><span class="val vhigh">463%</span></div>
+        <div class="stat-pill"><span class="label">Speed</span><span class="val high">Very Fast</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills / Type</div>
+        <span class="skill-tag">Slam AoE</span>
+        <span class="skill-tag">Gorilla Charge</span>
+        <span class="skill-tag buff">Aggressive</span>
+      </div>
+      <div class="beast-note recommend"><strong>Best Act 3 pick สำหรับ Spirit Walker</strong> — 463% damage + Very Fast movement ทำให้ตามทันทุก map</div>
+    </div>
+
+    <div class="beast-card a-tier">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Silverback Blackfist</div>
+          <div class="beast-loc">📍 <span class="area">Jungle Ruins (Variant)</span></div>
+        </div>
+        <span class="tier tier-A">A</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Life</span><span class="val high">250%</span></div>
+        <div class="stat-pill"><span class="label">Dmg</span><span class="val high">350%+</span></div>
+        <div class="stat-pill"><span class="label">Speed</span><span class="val">Fast</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag">Slam AoE</span>
+        <span class="skill-tag">Overhead Smash</span>
+      </div>
+      <div class="beast-note">Variant ของ Mighty Silverfist — ถ้าหา Mighty ไม่เจอ ใช้ตัวนี้แทนได้</div>
+    </div>
+
+    <div class="beast-card">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Quadrilla</div>
+          <div class="beast-loc">📍 <span class="area">Jungle Ruins / Troubled Camp</span></div>
+        </div>
+        <span class="tier tier-A">A</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Melee Charger</span></div>
+        <div class="stat-pill"><span class="label">Speed</span><span class="val high">Very High</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag">Extended Melee Range</span>
+        <span class="skill-tag">Charge</span>
+        <span class="skill-tag buff">High Mobility</span>
+      </div>
+      <div class="beast-note recommend">Non-boss ที่ movement speed สูง — ดีมากสำหรับ map clear speed ถ้ามี Haste Aura mod</div>
+    </div>
+
+    <div class="beast-card">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Diretusk Boar</div>
+          <div class="beast-loc">📍 <span class="area">Infested Barrens / Troubled Camp</span></div>
+        </div>
+        <span class="tier tier-B">B</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Melee Bleed</span></div>
+        <div class="stat-pill"><span class="label">Speed</span><span class="val">Moderate</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag debuff">Inflicts Bleed</span>
+        <span class="skill-tag">Tusk Charge</span>
+      </div>
+      <div class="beast-note">Bleed Synergy ดีกับ Wolf Pack + Bleed supports — ถ้า roll mods ดีอาจน่าเล่น</div>
+    </div>
+
+    <div class="beast-card">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Antlion Charger</div>
+          <div class="beast-loc">📍 <span class="area">Infested Barrens / Troubled Camp</span></div>
+        </div>
+        <span class="tier tier-C">C</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Melee</span></div>
+        <div class="stat-pill"><span class="label">Speed</span><span class="val" style="color:var(--red);">Very Low</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag">Roll Attack</span>
+        <span class="skill-tag warn">Slow</span>
+        <span class="skill-tag">Higher Armor</span>
+      </div>
+      <div class="beast-note warn-note"><strong>ไม่แนะนำ</strong> — movement speed ต่ำมาก ตามแทบไม่ทัน</div>
+    </div>
+
+    <div class="beast-card a-tier">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Vornas, the Fell Flame</div>
+          <div class="beast-loc">📍 <span class="area">Act 3 Gate Area</span></div>
+        </div>
+        <span class="tier tier-A">A</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Life</span><span class="val high">313%</span></div>
+        <div class="stat-pill"><span class="label">Dmg</span><span class="val high">313%</span></div>
+        <div class="stat-pill"><span class="label">Fire Res</span><span class="val">75%</span></div>
+        <div class="stat-pill"><span class="label">Speed</span><span class="val">Fast</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag" style="color:var(--orange); border-color:rgba(251,146,60,.4); background:rgba(251,146,60,.1);">Fire Breath</span>
+        <span class="skill-tag" style="color:var(--orange); border-color:rgba(251,146,60,.4); background:rgba(251,146,60,.1);">Flame Slam</span>
+        <span class="skill-tag buff">75% Fire Resistance</span>
+      </div>
+      <div class="beast-note recommend">Infernal Legion option ที่หาได้ใน Campaign — 75% fire res ลด self-damage จาก Infernal Legion ได้ดี</div>
+    </div>
+
+    <div class="beast-card a-tier">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Xyclucian, the Chimera</div>
+          <div class="beast-loc">📍 <span class="area">Chimeral Wetlands</span></div>
+        </div>
+        <span class="tier tier-A">A</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Multi-Element</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag">Fire</span>
+        <span class="skill-tag">Lightning</span>
+        <span class="skill-tag">Cold</span>
+        <span class="skill-tag">Poison</span>
+      </div>
+      <div class="beast-note">Versatile multi-element beast — ดีถ้า build ต้องการ elemental coverage</div>
+    </div>
+
+    <div class="beast-card a-tier">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Elzarah, the Cobra Lord</div>
+          <div class="beast-loc">📍 <span class="area">Act 3 / Singing Caverns area</span></div>
+        </div>
+        <span class="tier tier-A">A</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Life</span><span class="val high">288%</span></div>
+        <div class="stat-pill"><span class="label">Dmg</span><span class="val high">313%</span></div>
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Serpent</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag" style="color:var(--green); border-color:rgba(74,222,128,.4); background:rgba(74,222,128,.1);">Venom Spit</span>
+        <span class="skill-tag">Constrict</span>
+        <span class="skill-tag debuff">Poison AoE</span>
+      </div>
+      <div class="beast-note">Life+Damage สมดุลดี — ถ้ามี Haste Aura mod จะเป็น great pick</div>
+    </div>
+
+    <div class="beast-card">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Great White One</div>
+          <div class="beast-loc">📍 <span class="area">Whakapanu Island</span></div>
+        </div>
+        <span class="tier tier-A">A</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Whale/Aquatic</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag">Tail Sweep (Wide AoE)</span>
+        <span class="skill-tag">Tornado Summon</span>
+      </div>
+      <div class="beast-note">AoE ดี ใช้ tornado ช่วย clear — น่าสนใจถ้าต้องการ AoE coverage</div>
+    </div>
+
+    <div class="beast-card">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Sun Clan Scavenger</div>
+          <div class="beast-loc">📍 <span class="area">Jungle Ruins</span></div>
+        </div>
+        <span class="tier tier-B">B</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Non-Boss</span></div>
+        <div class="stat-pill"><span class="label">Dmg</span><span class="val high">Tame Beast buffed +40-84%</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag">Scavenge</span>
+        <span class="skill-tag">Pack Tactics</span>
+      </div>
+      <div class="beast-note recommend"><strong>Tame Beast buff 0.5</strong> ทำให้ damage เพิ่ม 40-84% — early farm target ที่ดีก่อนหา Boss Beast</div>
+    </div>
+
+  </div>
+
+  <!-- ACT 4 -->
+  <div class="act-label">Act 4</div>
+  <div class="beast-grid" style="margin-bottom: 24px;">
+
+    <div class="beast-card s-tier">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Scourge of the Skies ⭐</div>
+          <div class="beast-loc">📍 <span class="area">Shrike Island</span></div>
+        </div>
+        <span class="tier tier-S">S</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Flying Ranged</span></div>
+        <div class="stat-pill"><span class="label">Range</span><span class="val vhigh">Enormous</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag">Long Range Physical</span>
+        <span class="skill-tag buff">Stationary = no pathfinding issue</span>
+      </div>
+      <div class="beast-note recommend"><strong>Act 4 Best Pick</strong> — Stationary แต่ range ไกลมาก ตีได้ทุกอย่างในหน้าจอ</div>
+    </div>
+
+    <div class="beast-card">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Yama the White</div>
+          <div class="beast-loc">📍 <span class="area">Halls of the Dead</span></div>
+        </div>
+        <span class="tier tier-B">B</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Speed</span><span class="val">Fast</span></div>
+        <div class="stat-pill"><span class="label">Type</span><span class="val">AoE Melee</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag">Decent AoE</span>
+        <span class="skill-tag buff">Fast</span>
+      </div>
+      <div class="beast-note">Fast beast ที่ deal decent AoE — Tier B solid option</div>
+    </div>
+
+    <div class="beast-card">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Diamora, Song of Death</div>
+          <div class="beast-loc">📍 <span class="area">Singing Caverns</span></div>
+        </div>
+        <span class="tier tier-D">D</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Special Mechanic</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag warn">Arena-dependent mechanics</span>
+        <span class="skill-tag warn">Weak outside arena</span>
+      </div>
+      <div class="beast-note warn-note"><strong>ข้ามไปเลย</strong> — mechanic depends on arena environment ทำให้ weak มากเมื่อ summon นอก area</div>
+    </div>
+
+    <div class="beast-card">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Blind Beast</div>
+          <div class="beast-loc">📍 <span class="area">Isle of Kin</span></div>
+        </div>
+        <span class="tier tier-D">D</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Life</span><span class="val">300%</span></div>
+        <div class="stat-pill"><span class="label">Dmg</span><span class="val">150-250%</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag warn">Small model</span>
+        <span class="skill-tag warn">Weak attacks</span>
+      </div>
+      <div class="beast-note warn-note"><strong>ไม่แนะนำ</strong> — แม้ life สูง แต่ damage ต่ำและ model เล็กไม่น่าเล่น</div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== TRIAL/ENDGAME BEASTS ===== -->
+<section id="trial">
+  <div class="section-title">Trial / Endgame Beasts <span>— Trial of Chaos + Howling Caves</span></div>
+  <div class="beast-grid">
+
+    <div class="beast-card s-tier">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Chetza, the Feathered Plague ⭐</div>
+          <div class="beast-loc">📍 <span class="area">Temple of Chaos / Trial</span></div>
+        </div>
+        <span class="tier tier-S">S</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Life</span><span class="val high">250%</span></div>
+        <div class="stat-pill"><span class="label">Dmg</span><span class="val high">250%</span></div>
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Flying</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag">Tornado (Massive AoE)</span>
+        <span class="skill-tag buff">Flying — no geometry issues</span>
+        <span class="skill-tag">Independent movement</span>
+      </div>
+      <div class="beast-note recommend"><strong>Top 3 Trial Beast</strong> — Tornado ทำ massive AoE damage ขณะเคลื่อนที่อิสระ + Flying ทำให้ไม่ติด terrain</div>
+    </div>
+
+    <div class="beast-card a-tier">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">The Abominable Yeti ⭐</div>
+          <div class="beast-loc">📍 <span class="area">Howling Caves / Glacial Tarn</span></div>
+        </div>
+        <span class="tier tier-A">A</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Life</span><span class="val high">250%</span></div>
+        <div class="stat-pill"><span class="label">Dmg</span><span class="val vhigh">463%</span></div>
+        <div class="stat-pill"><span class="label">Speed</span><span class="val">Fast</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag">Slam AoE</span>
+        <span class="skill-tag">Freeze Ground</span>
+        <span class="skill-tag">Physical damage</span>
+      </div>
+      <div class="beast-note recommend">Stats เทียบเท่า Mighty Silverfist — ถ้าหา Silverfist ไม่เจอ ตัวนี้คือ alternative ที่ดีที่สุด</div>
+    </div>
+
+    <div class="beast-card a-tier">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Uxmal, the Beastlord</div>
+          <div class="beast-loc">📍 <span class="area">Temple of Chaos</span></div>
+        </div>
+        <span class="tier tier-A">A</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Multi-headed</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag">Diverse attack patterns</span>
+        <span class="skill-tag">Multi-head attacks</span>
+      </div>
+      <div class="beast-note">Versatile — หลาย attack patterns ทำให้ cover หลาย situation</div>
+    </div>
+
+    <div class="beast-card a-tier">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Bahlak, the Sky Seer</div>
+          <div class="beast-loc">📍 <span class="area">Temple of Chaos</span></div>
+        </div>
+        <span class="tier tier-A">A</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Tornado/Wind</span></div>
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Flying</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag">Tornado clearing</span>
+        <span class="skill-tag buff">Flying</span>
+      </div>
+      <div class="beast-note">Tornado clear potential ดี — Tier B สำหรับ Trial boss, A ถ้า Haste Aura</div>
+    </div>
+
+    <div class="beast-card a-tier">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Rakkar, the Frozen Talon</div>
+          <div class="beast-loc">📍 <span class="area">Glacial Tarn</span></div>
+        </div>
+        <span class="tier tier-A">A</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Element</span><span class="val" style="color:var(--blue);">Cold</span></div>
+        <div class="stat-pill"><span class="label">Speed</span><span class="val">Moderate</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag" style="color:var(--blue); border-color:rgba(96,165,250,.4); background:rgba(96,165,250,.1);">Freeze AoE</span>
+        <span class="skill-tag">Cold Slam</span>
+        <span class="skill-tag warn">Slow casting</span>
+      </div>
+      <div class="beast-note">Cold AoE ดี — casting ช้าแต่ damage ok ถ้ามี mods ดี</div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== MAP BOSS BEASTS ===== -->
+<section id="maps">
+  <div class="section-title">Map Boss Beasts <span>— Endgame Maps (ต้องการ Natural Order)</span></div>
+  <div class="beast-grid">
+
+    <div class="beast-card s-tier">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">Morvak, the Infernal ⭐⭐</div>
+          <div class="beast-loc">📍 <span class="area">Canyon Map Boss</span></div>
+        </div>
+        <span class="tier tier-S">S</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Life</span><span class="val high">313%</span></div>
+        <div class="stat-pill"><span class="label">Dmg</span><span class="val vhigh">500%</span></div>
+        <div class="stat-pill"><span class="label">Fire Res</span><span class="val">75%</span></div>
+        <div class="stat-pill"><span class="label">Speed</span><span class="val">Fast</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag" style="color:var(--orange); border-color:rgba(251,146,60,.4); background:rgba(251,146,60,.1);">Flame Breath</span>
+        <span class="skill-tag" style="color:var(--orange); border-color:rgba(251,146,60,.4); background:rgba(251,146,60,.1);">Ground Slash + Flame Wave</span>
+        <span class="skill-tag" style="color:var(--orange); border-color:rgba(251,146,60,.4); background:rgba(251,146,60,.1);">Multi-Slam Combo</span>
+        <span class="skill-tag" style="color:var(--orange); border-color:rgba(251,146,60,.4); background:rgba(251,146,60,.1);">Leap Slam</span>
+        <span class="skill-tag buff">75% Fire Resistance</span>
+      </div>
+      <div class="beast-note recommend">
+        <strong>#1 Beast ทั้งเกม</strong> — 500% damage multiplier ทิ้งห่างทุกตัว | 75% fire res ลด self-damage จาก Infernal Legion mod ได้สูงสุด | Base Morvak คือ Vornas ที่ evolve ขึ้นมา
+      </div>
+    </div>
+
+    <div class="beast-card a-tier">
+      <div class="beast-header">
+        <div>
+          <div class="beast-name">The Black Crow</div>
+          <div class="beast-loc">📍 <span class="area">Various Maps</span></div>
+        </div>
+        <span class="tier tier-A">A</span>
+      </div>
+      <div class="beast-stats">
+        <div class="stat-pill"><span class="label">Life</span><span class="val high">250%</span></div>
+        <div class="stat-pill"><span class="label">Dmg</span><span class="val vhigh">375%</span></div>
+        <div class="stat-pill"><span class="label">Speed</span><span class="val">Fast</span></div>
+        <div class="stat-pill"><span class="label">Type</span><span class="val">Flying</span></div>
+      </div>
+      <div class="beast-skills">
+        <div class="skill-label">Skills</div>
+        <span class="skill-tag">Physical hit</span>
+        <span class="skill-tag buff">Flying — no pathfinding issue</span>
+        <span class="skill-tag">Dive Strike</span>
+      </div>
+      <div class="beast-note">Solid map beast — Flying ทำให้ตาม player ได้ทุก map geometry</div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== REGULAR/NON-BOSS BEASTS ===== -->
+<section id="regular">
+  <div class="section-title">Regular Beasts <span>— Non-Boss Options (ราคา Spirit ถูกกว่า)</span></div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Beast</th>
+          <th>Location</th>
+          <th>Life%</th>
+          <th>Dmg%</th>
+          <th>Spirit</th>
+          <th>Type</th>
+          <th>Best For</th>
+          <th>Tier</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="name">Elephant Tortoise ⭐</td>
+          <td class="loc">Various</td>
+          <td><strong style="color:var(--orange);">350%</strong></td>
+          <td>~200%</td>
+          <td>130</td>
+          <td>Tanky</td>
+          <td>Infernal Legion (high HP = more fire DoT)</td>
+          <td class="tier-cell"><span class="tier tier-A">A</span></td>
+        </tr>
+        <tr>
+          <td class="name">Crested Behemoth</td>
+          <td class="loc">Various</td>
+          <td><strong style="color:var(--orange);">330%</strong></td>
+          <td>330%</td>
+          <td>170</td>
+          <td>Melee Tank</td>
+          <td>High HP scaling + Infernal Legion</td>
+          <td class="tier-cell"><span class="tier tier-A">A</span></td>
+        </tr>
+        <tr>
+          <td class="name">Stoneclad Gorilla</td>
+          <td class="loc">Various</td>
+          <td>250%</td>
+          <td>250%</td>
+          <td>130</td>
+          <td>Melee</td>
+          <td>Balanced option ก่อนหา boss beast</td>
+          <td class="tier-cell"><span class="tier tier-B">B</span></td>
+        </tr>
+        <tr>
+          <td class="name">Alpha Primate</td>
+          <td class="loc">Various Jungle</td>
+          <td>175%</td>
+          <td>175%</td>
+          <td>90</td>
+          <td>Melee</td>
+          <td>Budget option — Spirit ถูก</td>
+          <td class="tier-cell"><span class="tier tier-C">C</span></td>
+        </tr>
+        <tr>
+          <td class="name">Gargantuan Wasp</td>
+          <td class="loc">Various</td>
+          <td>~180%</td>
+          <td>~180%</td>
+          <td>90</td>
+          <td>Flying</td>
+          <td>Flying — ไม่ติด geometry</td>
+          <td class="tier-cell"><span class="tier tier-B">B</span></td>
+        </tr>
+        <tr>
+          <td class="name">Vile Vulture</td>
+          <td class="loc">Various</td>
+          <td>~160%</td>
+          <td>~200%</td>
+          <td>90</td>
+          <td>Flying Ranged</td>
+          <td>Flying + Ranged — geometry-agnostic</td>
+          <td class="tier-cell"><span class="tier tier-B">B</span></td>
+        </tr>
+        <tr>
+          <td class="name">Treant Fungalreaver</td>
+          <td class="loc">Various Forest</td>
+          <td>250%</td>
+          <td>250%</td>
+          <td>130</td>
+          <td>AoE</td>
+          <td>Fungal AoE spread</td>
+          <td class="tier-cell"><span class="tier tier-B">B</span></td>
+        </tr>
+        <tr>
+          <td class="name">Abyss Fish</td>
+          <td class="loc">Abyss Areas</td>
+          <td>60%</td>
+          <td>60%</td>
+          <td>30</td>
+          <td>Tiny</td>
+          <td>ไม่แนะนำ — stats ต่ำมาก</td>
+          <td class="tier-cell"><span class="tier tier-D">D</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:14px; background:var(--card); border:1px solid rgba(250,204,21,.3); border-radius:8px; padding:14px; font-size:13px;">
+    <strong style="color:var(--yellow);">💡 Infernal Legion Note:</strong>
+    <span style="color:var(--muted); margin-left:8px;">Elephant Tortoise (350% Life) หรือ Crested Behemoth (330% Life) คือตัวเลือกดีที่สุดสำหรับ Infernal Legion support เพราะ fire DoT scale ตาม Max Life ของ Beast โดยตรง</span>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== QUICK REFERENCE ===== -->
+<section id="quickref">
+  <div class="section-title">Quick Reference <span>— Spirit Walker Beast Priority</span></div>
+  <div class="quick-grid">
+
+    <div class="quick-card">
+      <h4>Early Game (Act 1-2)</h4>
+      <ul>
+        <li><strong>Best:</strong> Constrictor Queen Kabala (Act 2)</li>
+        <li><strong>Ok:</strong> The Crowbell (Act 1)</li>
+        <li><strong>Skip:</strong> The Devourer, Rathbreaker</li>
+        <li><strong>Goal:</strong> อย่าเสียเวลา farm เปลี่ยน beast บ่อย</li>
+      </ul>
+    </div>
+
+    <div class="quick-card">
+      <h4>Act 3 Priority</h4>
+      <ul>
+        <li>🥇 <strong>Mighty Silverfist</strong> — Jungle Ruins</li>
+        <li>🥈 <strong>Vornas, Fell Flame</strong> — ถ้าต้องการ Fire</li>
+        <li>🥉 <strong>Quadrilla</strong> — Non-boss, ถ้ามี Haste Aura</li>
+        <li><strong>Skip:</strong> Antlion Charger, Blind Beast</li>
+      </ul>
+    </div>
+
+    <div class="quick-card">
+      <h4>Endgame Goal</h4>
+      <ul>
+        <li>🏆 <strong>Morvak, the Infernal</strong> (Canyon Map)</li>
+        <li>2nd: <strong>Chetza, Feathered Plague</strong> (Trial)</li>
+        <li>Alt: <strong>Abominable Yeti</strong> (Howling Caves)</li>
+        <li><strong>ต้องการ:</strong> Natural Order Ascendancy node</li>
+      </ul>
+    </div>
+
+    <div class="quick-card">
+      <h4>Modifier Priority</h4>
+      <ul>
+        <li>1st: <strong>Haste Aura</strong> — speed สำคัญสุด</li>
+        <li>2nd: <strong>Temporal Bubble</strong> — slow enemies</li>
+        <li>3rd: <strong>Ele Resist Aura</strong> — fix resistances</li>
+        <li>4th: <strong>Soul Eater</strong> — ramp damage</li>
+      </ul>
+    </div>
+
+    <div class="quick-card">
+      <h4>Infernal Legion Setup</h4>
+      <ul>
+        <li><strong>Beast:</strong> Elephant Tortoise / Crested Behemoth</li>
+        <li><strong>Modifier:</strong> Infernal Legion + 75% Fire Res</li>
+        <li><strong>Alternative:</strong> Vornas → Morvak (75% fire res)</li>
+        <li><strong>Note:</strong> HP ของ beast = damage ของ fire DoT</li>
+      </ul>
+    </div>
+
+    <div class="quick-card">
+      <h4>Natural Order (Ascendancy)</h4>
+      <ul>
+        <li>ต้องใช้เพื่อจับ <strong>Act Bosses</strong></li>
+        <li>ต้องใช้เพื่อจับ <strong>Map Bosses</strong></li>
+        <li>ไม่ต้องใช้สำหรับ Rare beasts ทั่วไป</li>
+        <li><strong>Priority:</strong> Unlock หลัง Catha's Balance</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Spirit Walker Beast Guide — POE2 Patch 0.5 Runes of Aldur | KhemTEAM | อัปเดต 2026-05-26<br>
+  <span style="color: rgba(112,112,160,.5);">⚠️ ข้อมูลบางส่วนอิงจาก patch notes + community theory — verify ใน game เมื่อ league เปิด</span>
+</footer>
+
+</body>
+</html>

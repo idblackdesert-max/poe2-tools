@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Twister Amazon — Runes of Aldur 0.5</title>
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #16161a;
+    --surface2: #1e1e24;
+    --border: #2a2a35;
+    --text: #e0e0e8;
+    --muted: #8888aa;
+    --green: #4ecb71;
+    --red: #e05555;
+    --yellow: #e0b84e;
+    --blue: #4e9fe0;
+    --purple: #a07fe0;
+    --orange: #e07a4e;
+    --teal: #4ecbc0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.6; }
+
+  .header {
+    background: linear-gradient(135deg, #1a1100 0%, #0d0d0f 55%, #121a00 100%);
+    border-bottom: 2px solid var(--yellow);
+    padding: 28px 24px 20px;
+    text-align: center;
+  }
+  .header h1 { font-size: 26px; color: var(--yellow); margin-bottom: 6px; letter-spacing: 0.02em; }
+  .header .subtitle { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
+  .badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .badge { padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .badge-yellow { background: rgba(224,184,78,0.15); border: 1px solid var(--yellow); color: var(--yellow); }
+  .badge-red { background: rgba(224,85,85,0.15); border: 1px solid var(--red); color: var(--red); }
+  .badge-blue { background: rgba(78,159,224,0.15); border: 1px solid var(--blue); color: var(--blue); }
+  .badge-green { background: rgba(78,203,113,0.15); border: 1px solid var(--green); color: var(--green); }
+
+  nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    padding: 10px 16px;
+    font-size: 13px;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  nav a:hover { color: var(--text); border-bottom-color: var(--yellow); }
+  nav a.active { color: var(--yellow); border-bottom-color: var(--yellow); }
+  .wip-tag {
+    background: rgba(224,85,85,0.12);
+    border: 1px solid rgba(224,85,85,0.25);
+    color: rgba(224,85,85,0.6);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 24px 16px 48px; }
+
+  .act-section { margin-bottom: 40px; }
+  .act-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+  .act-header h2 { font-size: 16px; color: var(--yellow); border-left: 3px solid var(--yellow); padding-left: 12px; font-weight: 700; letter-spacing: 0.05em; }
+  .act-range { font-size: 12px; color: var(--muted); background: var(--surface2); border: 1px solid var(--border); padding: 2px 8px; border-radius: 4px; }
+
+  /* Gem slots summary */
+  .slots-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .slot-chip { display: flex; align-items: center; gap: 6px; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 4px 10px; font-size: 12px; color: var(--muted); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dot-green { background: var(--green); }
+  .dot-blue { background: var(--blue); }
+  .dot-purple { background: var(--purple); }
+
+  /* Checklist table */
+  .checklist { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .checklist th { background: var(--surface2); color: var(--muted); padding: 8px 14px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--border); }
+  .checklist th.col-lv { width: 52px; }
+  .checklist th.col-area { width: 175px; }
+  .checklist td { padding: 7px 14px; border-bottom: 1px solid rgba(42,42,53,0.7); vertical-align: middle; font-size: 13.5px; }
+  .checklist tr:last-child td { border-bottom: none; }
+  .checklist tr:hover td { background: rgba(255,255,255,0.018); }
+
+  /* Level cell */
+  .lv { font-size: 12px; color: var(--muted); font-family: monospace; }
+  .lv-exact { font-size: 13px; color: var(--yellow); font-weight: 700; font-family: monospace; }
+
+  /* Area cell */
+  .area { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+  /* Action cell */
+  .action { line-height: 1.4; }
+  .gem-name { color: var(--text); font-weight: 600; }
+  .gem-source { color: var(--muted); font-size: 12px; margin-left: 2px; }
+  .slot-num { background: var(--surface2); border: 1px solid var(--border); border-radius: 3px; padding: 1px 5px; font-size: 11px; color: var(--muted); margin-left: 5px; }
+
+  /* Row type coloring */
+  .row-gem .lv-exact, .row-gem .lv { color: var(--green); }
+  .row-support .lv-exact, .row-support .lv { color: var(--blue); }
+  .row-spirit .lv-exact, .row-spirit .lv { color: var(--purple); }
+  .row-upgrade .lv-exact, .row-upgrade .lv { color: var(--teal); }
+  .row-weapon .lv-exact, .row-weapon .lv { color: var(--orange); }
+  .row-rune .lv-exact, .row-rune .lv { color: var(--yellow); }
+  .row-warn td { background: rgba(224,85,85,0.03) !important; }
+  .row-warn .action { color: var(--red); font-weight: 500; }
+  .row-muted .action { color: var(--muted); }
+
+  /* Area group separator */
+  .area-sep td { border-top: 1px solid var(--border) !important; }
+
+  /* Regex box */
+  .regex-line { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+  .regex-text {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 13px;
+    color: var(--teal);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 10px;
+    letter-spacing: 0.02em;
+  }
+  .copy-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 3px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .copy-btn:hover { color: var(--text); border-color: var(--yellow); background: var(--surface2); }
+  .copy-btn.copied { color: var(--green); border-color: var(--green); }
+
+  /* Placeholder for empty acts */
+  .placeholder {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  /* Skill Setup panel */
+  .skill-setup { margin-top: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .setup-header { background: var(--surface2); padding: 7px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .setup-row { display: flex; align-items: center; padding: 7px 14px; border-bottom: 1px solid rgba(42,42,53,0.6); gap: 10px; }
+  .setup-row:last-child { border-bottom: none; }
+  .setup-row:hover { background: rgba(255,255,255,0.015); }
+  .setup-skill { font-size: 13px; font-weight: 600; min-width: 150px; color: var(--text); flex-shrink: 0; }
+  .setup-skill.spirit { color: var(--purple); }
+  .setup-supports { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .sup-chip { background: rgba(78,159,224,0.1); border: 1px solid rgba(78,159,224,0.3); color: var(--blue); border-radius: 4px; padding: 2px 9px; font-size: 12px; font-weight: 500; }
+  .sup-chip.spirit-sup { background: rgba(160,127,224,0.1); border-color: rgba(160,127,224,0.3); color: var(--purple); }
+  .no-sup { color: var(--border); font-size: 13px; }
+
+  /* Conditional action badge */
+  .cond-badge { display:inline-block; background:rgba(160,127,224,0.12); border:1px solid rgba(160,127,224,0.3); color:var(--purple); border-radius:3px; padding:1px 6px; font-size:10px; font-weight:700; margin-right:4px; vertical-align:middle; }
+
+  /* Drop column */
+  .col-drop { width: 130px; }
+  .drop-tag { display: inline-block; padding: 2px 7px; border-radius: 3px; font-size: 11px; font-weight: 600; white-space: nowrap; line-height: 1.5; }
+  .drop-currency { background: rgba(78,159,224,0.1); border: 1px solid rgba(78,159,224,0.25); color: var(--blue); }
+  .drop-skill    { background: rgba(78,203,113,0.1); border: 1px solid rgba(78,203,113,0.25); color: var(--green); }
+  .drop-support  { background: rgba(78,203,113,0.07); border: 1px solid rgba(78,203,113,0.18); color: #7acfa8; }
+  .drop-spirit   { background: rgba(160,127,224,0.1); border: 1px solid rgba(160,127,224,0.25); color: var(--purple); }
+  .drop-equip    { background: rgba(224,122,78,0.1); border: 1px solid rgba(224,122,78,0.25); color: var(--orange); }
+  .drop-rune     { background: rgba(224,184,78,0.1); border: 1px solid rgba(224,184,78,0.25); color: var(--yellow); }
+
+  /* Collapse toggle */
+  .act-header { cursor: pointer; user-select: none; }
+  .act-header:hover { background: rgba(255,255,255,0.015); border-radius: 4px; }
+  .act-toggle { margin-left: auto; background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 4px; padding: 2px 10px; font-size: 13px; cursor: pointer; transition: color 0.15s, border-color 0.15s; flex-shrink: 0; }
+  .act-toggle:hover { color: var(--yellow); border-color: var(--yellow); }
+  .act-body.collapsed { display: none; }
+
+  @media (max-width: 580px) {
+    .checklist th.col-area,
+    .checklist td:nth-child(2) { display: none; }
+    nav a { padding: 10px 10px; font-size: 12px; }
+    .setup-skill { min-width: 120px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🌪 Twister Amazon</h1>
+  <div class="subtitle">Amazon | Runes of Aldur 0.5.0 | League Starter</div>
+  <div class="badges">
+    <span class="badge badge-yellow">Twister Build</span>
+    <span class="badge badge-red">⚠️ Nerf Risk: สูง</span>
+    <span class="badge badge-blue">Patch 0.5.0</span>
+    <span class="badge badge-green">Amazon Class</span>
+  </div>
+  <div style="margin-top:14px;">
+    <a href="https://www.pathofexile.com/account/view-profile/GuyThatDies-7619/item-filters" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;background:rgba(224,184,78,0.12);border:1px solid rgba(224,184,78,0.4);color:var(--yellow);padding:7px 16px;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;transition:background 0.15s;" onmouseover="this.style.background='rgba(224,184,78,0.22)'" onmouseout="this.style.background='rgba(224,184,78,0.12)'">
+      🔍 GuyThatDies Item Filters
+    </a>
+  </div>
+</div>
+
+<nav>
+  <a href="#act1" class="active">Act 1</a>
+  <a href="#act2">Act 2 <span class="wip-tag">WIP</span></a>
+  <a href="#act3">Act 3 <span class="wip-tag">WIP</span></a>
+  <a href="#act4">Act 4 <span class="wip-tag">WIP</span></a>
+  <a href="#endgame">Endgame <span class="wip-tag">WIP</span></a>
+  <a href="#gear">Gear <span class="wip-tag">WIP</span></a>
+</nav>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════ ACT 1 ═══ -->
+<div class="act-section" id="act1">
+  <div class="act-header" onclick="toggleAct('act1')">
+    <h2>ACT 1</h2>
+    <span class="act-range">Lv 1 – 14</span>
+    <button class="act-toggle" id="btn-act1">▼</button>
+  </div>
+  <div class="act-body" id="body-act1">
+
+  <div class="slots-bar">
+    <div class="slot-chip"><span class="dot dot-green"></span>Active: Twister · Frost Bomb · Fangs of Frost · Barrage</div>
+    <div class="slot-chip"><span class="dot dot-blue"></span>Support ×4: Retreat I · Rage I · Rapid Attack I · Prolong Duration</div>
+    <div class="slot-chip"><span class="dot dot-purple"></span>Spirit ×1: Warbanner</div>
+  </div>
+
+  <table class="checklist">
+    <thead>
+      <tr>
+        <th class="col-lv">Lv</th>
+        <th class="col-area">Area</th>
+        <th>Action</th>
+        <th class="col-drop">League Drop</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- Clear Fall -->
+      <tr class="row-gem">
+        <td><span class="lv-exact">1</span></td>
+        <td class="area">Clear Fall</td>
+        <td class="action">🟢 <span class="gem-name">Twister</span> <span class="gem-source">Uncut Skill lv1</span></td>
+        <td><span class="drop-tag drop-currency">Orb of Trans.</span></td>
+      </tr>
+      <tr class="row-gem">
+        <td><span class="lv">1</span></td>
+        <td class="area">Clear Fall</td>
+        <td class="action">🟢 <span class="gem-name">Frost Bomb</span> <span class="gem-source">Uncut Skill lv1</span></td>
+        <td></td>
+      </tr>
+
+      <!-- Grelwood -->
+      <tr class="row-support area-sep">
+        <td><span class="lv">~3</span></td>
+        <td class="area">Grelwood</td>
+        <td class="action">🔵 <span class="gem-name">Retreat I</span> <span class="slot-num">Support เม็ด 1</span></td>
+        <td><span class="drop-tag drop-currency">Orb of Trans.</span></td>
+      </tr>
+
+      <!-- Red Vale -->
+      <tr class="row-upgrade area-sep">
+        <td><span class="lv-exact">5</span></td>
+        <td class="area">Red Vale</td>
+        <td class="action">⬆️ Twister → lv2</td>
+        <td><span class="drop-tag drop-skill">Skill Gem lv2</span></td>
+      </tr>
+      <tr class="row-weapon">
+        <td><span class="lv">5</span></td>
+        <td class="area">Red Vale</td>
+        <td class="action">
+          🗡️ Weapon check
+          <div class="regex-line">
+            <span class="regex-text">ear|mov|[egdl] da.* to a</span>
+            <button class="copy-btn" onclick="copyText(this,'ear|mov|[egdl] da.* to a')">Copy</button>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+      <tr class="row-muted">
+        <td><span class="lv">5</span></td>
+        <td class="area">Red Vale</td>
+        <td class="action">📦 เก็บ Uncut lv3 ไว้ก่อน</td>
+        <td></td>
+      </tr>
+
+      <!-- Cemetery of Eternals -->
+      <tr class="row-gem area-sep">
+        <td><span class="lv-exact">6</span></td>
+        <td class="area">Cemetery of Eternals</td>
+        <td class="action">🟢 <span class="gem-name">Fangs of Frost</span> <span class="gem-source">Uncut lv3 (Quest)</span></td>
+        <td><span class="drop-tag drop-currency">Regal Orb</span></td>
+      </tr>
+      <tr>
+        <td><span class="lv">6</span></td>
+        <td class="area">Cemetery of Eternals</td>
+        <td class="action" style="color:var(--muted)">💍 Ring (Quest reward)</td>
+        <td></td>
+      </tr>
+
+      <!-- Tomb of the Consort -->
+      <tr class="area-sep">
+        <td><span class="lv">~7</span></td>
+        <td class="area">Tomb of the Consort</td>
+        <td class="action" style="color:var(--muted)">📿 Amulet (Quest)</td>
+        <td><span class="drop-tag drop-equip">Amulet (Normal)</span></td>
+      </tr>
+      <tr class="row-support">
+        <td><span class="lv">~7</span></td>
+        <td class="area">Tomb of the Consort</td>
+        <td class="action">🔵 <span class="gem-name">Rage I</span> <span class="gem-source">→ Whirling Slash</span> <span class="slot-num">Support เม็ด 2</span></td>
+        <td></td>
+      </tr>
+
+      <!-- Mausoleum -->
+      <tr class="row-warn area-sep">
+        <td><span class="lv">~8</span></td>
+        <td class="area">Mausoleum</td>
+        <td class="action">⚠️ HP ≥ 130 ก่อน Boss</td>
+        <td><span class="drop-tag drop-rune">Lesser Rune</span></td>
+      </tr>
+      <tr class="row-weapon">
+        <td><span class="lv">~8</span></td>
+        <td class="area">Mausoleum</td>
+        <td class="action">
+          🗡️ Weapon check (หลัง Boss)
+          <div class="regex-line">
+            <span class="regex-text">ear|mov|[egdl] da.* to a</span>
+            <button class="copy-btn" onclick="copyText(this,'ear|mov|[egdl] da.* to a')">Copy</button>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+
+      <!-- Hunting Grounds -->
+      <tr class="row-support area-sep">
+        <td><span class="lv">~9</span></td>
+        <td class="area">Hunting Grounds</td>
+        <td class="action">🔵 <span class="gem-name">Rapid Attack I</span> <span class="slot-num">Support เม็ด 3</span></td>
+        <td><span class="drop-tag drop-currency">Exalted Orb</span></td>
+      </tr>
+
+      <!-- Feython -->
+      <tr class="row-warn area-sep">
+        <td><span class="lv-exact">10</span></td>
+        <td class="area">Feython (Town)</td>
+        <td class="action">⚠️ ถึง lv10 ก่อน Boss</td>
+        <td><span class="drop-tag drop-support">Support lv1</span></td>
+      </tr>
+      <tr class="row-spirit">
+        <td><span class="lv">10</span></td>
+        <td class="area">Feython (Town)</td>
+        <td class="action">🟣 <span class="gem-name">Warbanner</span> <span class="gem-source">Spirit Gem lv4 (Quest)</span> <span class="slot-num">Spirit เม็ด 1</span></td>
+        <td></td>
+      </tr>
+
+      <!-- Ogham Farmlands -->
+      <tr class="row-upgrade area-sep">
+        <td><span class="lv">~11</span></td>
+        <td class="area">Ogham Farmlands</td>
+        <td class="action">⬆️ Twister → lv4</td>
+        <td><span class="drop-tag drop-skill">Skill Gem lv4</span></td>
+      </tr>
+
+      <!-- Ogham Village -->
+      <tr class="row-gem area-sep">
+        <td><span class="lv">~12</span></td>
+        <td class="area">Ogham Village</td>
+        <td class="action">🟢 <span class="gem-name">Barrage</span> <span class="gem-source">Quest lv5</span></td>
+        <td><span class="drop-tag drop-currency">Artificer's Orb</span></td>
+      </tr>
+      <tr class="row-rune">
+        <td><span class="lv">~12</span></td>
+        <td class="area">Ogham Village</td>
+        <td class="action">🔷 Storm Rune → ใส่ Weapon (Runeforging)</td>
+        <td></td>
+      </tr>
+      <tr class="row-weapon">
+        <td><span class="lv">~12</span></td>
+        <td class="area">Ogham Village</td>
+        <td class="action">
+          🗡️ Weapon check
+          <div class="regex-line">
+            <span class="regex-text">ear|mov|[egdl] da.* to a</span>
+            <button class="copy-btn" onclick="copyText(this,'ear|mov|[egdl] da.* to a')">Copy</button>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+      <tr class="row-warn">
+        <td><span class="lv">~12</span></td>
+        <td class="area">Ogham Village</td>
+        <td class="action">⚠️ HP ≥ 240 ก่อน Boss</td>
+        <td></td>
+      </tr>
+
+      <!-- The Manor Ramparts -->
+      <tr class="row-support area-sep">
+        <td><span class="lv-exact">13</span></td>
+        <td class="area">The Manor Ramparts</td>
+        <td class="action">🔵 <span class="gem-name">Prolong Duration</span> <span class="gem-source">→ ใส่ Warbanner</span> <span class="slot-num">Support เม็ด 4</span></td>
+        <td><span class="drop-tag drop-skill">Skill Gem lv5</span></td>
+      </tr>
+      <tr class="row-warn">
+        <td><span class="lv">13</span></td>
+        <td class="area">The Manor Ramparts</td>
+        <td class="action">⚠️ ถึง lv13 ก่อนออก</td>
+        <td></td>
+      </tr>
+
+      <!-- Ogham Manor -->
+      <tr class="row-warn area-sep">
+        <td><span class="lv-exact">14</span></td>
+        <td class="area">Ogham Manor</td>
+        <td class="action">⚠️ ถึง lv14 ก่อน Boss</td>
+        <td><span class="drop-tag drop-currency">Alchemy Orb</span></td>
+      </tr>
+      <tr class="row-weapon">
+        <td><span class="lv">14</span></td>
+        <td class="area">Ogham Manor</td>
+        <td class="action">
+          🗡️ Weapon check ก่อน Boss
+          <div class="regex-line">
+            <span class="regex-text">ear|mov|[egdl] da.* to a</span>
+            <button class="copy-btn" onclick="copyText(this,'ear|mov|[egdl] da.* to a')">Copy</button>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <!-- Skill Setup snapshot -->
+  <div class="skill-setup">
+    <div class="setup-header">Skill Setup — จบ Act 1</div>
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:rgba(224,184,78,0.06);border-bottom:1px solid var(--border);flex-wrap:wrap;">
+      <span style="font-size:11px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;">⬆️ Upgrade Priority</span>
+      <span style="font-size:12px;color:var(--muted);">ทุกครั้งที่ได้ Uncut Gem :</span>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+        <span style="background:var(--surface2);border:1px solid var(--yellow);color:var(--yellow);border-radius:4px;padding:2px 9px;font-size:12px;font-weight:600;">1 Twister</span>
+        <span style="color:var(--border);font-size:11px;">›</span>
+        <span style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:4px;padding:2px 9px;font-size:12px;font-weight:600;">2 Ice-Tipped Arrows</span>
+        <span style="color:var(--border);font-size:11px;">›</span>
+        <span style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:4px;padding:2px 9px;font-size:12px;font-weight:600;">3 Whirling Slash</span>
+        <span style="color:var(--border);font-size:11px;">›</span>
+        <span style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:4px;padding:2px 9px;font-size:12px;font-weight:600;">4 Barrage</span>
+      </div>
+    </div>
+
+    <div class="setup-row">
+      <div class="setup-skill">🟢 Twister</div>
+      <div class="setup-supports">
+        <span class="sup-chip">Retreat I</span>
+      </div>
+    </div>
+
+    <div class="setup-row">
+      <div class="setup-skill">🟢 Whirling Slash</div>
+      <div class="setup-supports">
+        <span class="sup-chip">Rage I</span>
+        <span class="sup-chip">Rapid Attack I</span>
+      </div>
+    </div>
+
+    <div class="setup-row">
+      <div class="setup-skill">🟢 Barrage</div>
+      <div class="setup-supports"><span class="no-sup">—</span></div>
+    </div>
+
+    <div class="setup-row">
+      <div class="setup-skill">🟢 Fangs of Frost</div>
+      <div class="setup-supports"><span class="no-sup">—</span></div>
+    </div>
+
+    <div class="setup-row">
+      <div class="setup-skill">🟢 Frost Bomb</div>
+      <div class="setup-supports"><span class="no-sup">—</span></div>
+    </div>
+
+    <div class="setup-row">
+      <div class="setup-skill spirit">🟣 Warbanner</div>
+      <div class="setup-supports">
+        <span class="sup-chip spirit-sup">Prolong Duration</span>
+      </div>
+    </div>
+
+  </div>
+  </div><!-- /body-act1 -->
+</div>
+
+<!-- ═══════════════════════════════════════ ACT 2 ═══ -->
+<div class="act-section" id="act2">
+  <div class="act-header" onclick="toggleAct('act2')">
+    <h2>ACT 2</h2>
+    <span class="act-range">Lv 14 – 29</span>
+    <button class="act-toggle" id="btn-act2">▼</button>
+  </div>
+  <div class="act-body" id="body-act2">
+
+  <div class="slots-bar">
+    <div class="slot-chip"><span class="dot dot-green"></span>Active ใหม่: Ice-Tipped Arrows · Tame Beast · Herald of Ice · (Freezing Mark if drop)</div>
+    <div class="slot-chip"><span class="dot dot-blue"></span>Support ใหม่: Rapid Casting I · (Frost Nexus if RNG) · Elemental Armament II</div>
+    <div class="slot-chip"><span class="dot dot-purple"></span>Ascend: Spirit Walker — Critical Chance Node → Primal Bounty Node</div>
+  </div>
+
+  <table class="checklist">
+    <thead>
+      <tr>
+        <th class="col-lv">Lv</th>
+        <th class="col-area">Area</th>
+        <th>Action</th>
+        <th class="col-drop">League Drop</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- Vastiri Outskirts -->
+      <tr class="row-support">
+        <td><span class="lv">~15</span></td>
+        <td class="area">Vastiri Outskirts</td>
+        <td class="action"><span class="cond-badge">🎲 if RNG</span> 🔵 <span class="gem-name">Frost Nexus</span> <span class="gem-source">Support lv2 → Twister</span></td>
+        <td><span class="drop-tag drop-currency">Exalted Orb</span></td>
+      </tr>
+      <tr>
+        <td><span class="lv">~15</span></td>
+        <td class="area">Vastiri Outskirts</td>
+        <td class="action" style="color:var(--muted)">⚡ Play Mechanic</td>
+        <td></td>
+      </tr>
+
+      <!-- Town -->
+      <tr class="row-weapon area-sep">
+        <td><span class="lv">~15</span></td>
+        <td class="area">Town</td>
+        <td class="action">
+          🗡️ Weapon check (Wing Spear)
+          <div class="regex-line">
+            <span class="regex-text">ear|mov|[egdl] da.* to a</span>
+            <button class="copy-btn" onclick="copyText(this,'ear|mov|[egdl] da.* to a')">Copy</button>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+      <tr class="row-gem">
+        <td><span class="lv">~15</span></td>
+        <td class="area">Town</td>
+        <td class="action">🟢 <span class="gem-name">Ice-Tipped Arrows</span> <span class="gem-source">Gem lv5 (Quest)</span> <span class="slot-num">เม็ด 2</span></td>
+        <td></td>
+      </tr>
+      <tr class="row-muted">
+        <td><span class="lv">~15</span></td>
+        <td class="area">Town</td>
+        <td class="action">🔄 สลับ Ice-Tipped Arrows แทน Fangs of Frost</td>
+        <td></td>
+      </tr>
+      <tr class="row-muted">
+        <td><span class="lv">~15</span></td>
+        <td class="area">Town</td>
+        <td class="action">⚙️ Ice-Tipped Arrows → Weapon II &nbsp;·&nbsp; Barrage → Weapon I</td>
+        <td></td>
+      </tr>
+
+      <!-- Mawdun Quarry -->
+      <tr class="area-sep">
+        <td><span class="lv">~16</span></td>
+        <td class="area">Mawdun Quarry</td>
+        <td class="action" style="color:var(--muted)">ผ่าน</td>
+        <td><span class="drop-tag drop-spirit">Spirit lv5</span></td>
+      </tr>
+
+      <!-- Mawdun Mine -->
+      <tr class="row-warn area-sep">
+        <td><span class="lv-exact">18</span></td>
+        <td class="area">Mawdun Mine</td>
+        <td class="action">⚠️ HP ≥ 340 (Lv18)</td>
+        <td></td>
+      </tr>
+      <tr class="row-upgrade">
+        <td><span class="lv">18</span></td>
+        <td class="area">Mawdun Mine</td>
+        <td class="action">⬆️ Twister → lv6</td>
+        <td></td>
+      </tr>
+      <tr class="row-support">
+        <td><span class="lv">18</span></td>
+        <td class="area">Mawdun Mine</td>
+        <td class="action">🔵 <span class="gem-name">Rapid Casting I</span> <span class="gem-source">→ Barrage</span> <span class="slot-num">Support lv1</span></td>
+        <td></td>
+      </tr>
+
+      <!-- Town -->
+      <tr class="row-weapon area-sep">
+        <td><span class="lv">~18</span></td>
+        <td class="area">Town</td>
+        <td class="action">
+          🗡️ Weapon check (Wing Spear)
+          <div class="regex-line">
+            <span class="regex-text">ear|mov|[egdl] da.* to a</span>
+            <button class="copy-btn" onclick="copyText(this,'ear|mov|[egdl] da.* to a')">Copy</button>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+
+      <!-- Traitor's Passage -->
+      <tr class="area-sep">
+        <td><span class="lv">~19</span></td>
+        <td class="area">Traitor's Passage</td>
+        <td class="action" style="color:var(--red);font-weight:500;">☠️ Kill Jin → Ascendancy Key</td>
+        <td><span class="drop-tag drop-currency">Artificer's Orb</span></td>
+      </tr>
+
+      <!-- The Halani Gates -->
+      <tr class="row-support area-sep">
+        <td><span class="lv">~20</span></td>
+        <td class="area">The Halani Gates</td>
+        <td class="action"><span class="cond-badge">🎲 if RNG</span> 🔵 <span class="gem-name">Elemental Armament II</span> <span class="gem-source">Support lv2 → Ice-Tipped Arrows</span></td>
+        <td><span class="drop-tag drop-currency">Exalted Orb</span></td>
+      </tr>
+      <tr class="row-upgrade">
+        <td><span class="lv">~20</span></td>
+        <td class="area">The Halani Gates</td>
+        <td class="action"><span class="cond-badge">🎲 if RNG</span> ⬆️ Ice-Tipped Arrows → lv6</td>
+        <td></td>
+      </tr>
+
+      <!-- Town — Ascendancy -->
+      <tr class="row-gem area-sep">
+        <td><span class="lv">~21</span></td>
+        <td class="area">Town</td>
+        <td class="action">🟢 <span class="gem-name">Tame Beast</span> <span class="gem-source">Gem lv7 (Quest)</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="lv">~21</span></td>
+        <td class="area">Town</td>
+        <td class="action" style="color:var(--purple);font-weight:600;">🏆 Ascend → Spirit Walker<br><span style="font-size:12px;color:var(--muted);font-weight:400;">Critical Chance Node → Primal Bounty Node</span></td>
+        <td></td>
+      </tr>
+
+      <!-- Mastodon Badlands -->
+      <tr class="area-sep">
+        <td><span class="lv">~24</span></td>
+        <td class="area">Mastodon Badlands</td>
+        <td class="action" style="color:var(--yellow)">📍 Abyss → Knotted Drill Bone (Weapon lv46)</td>
+        <td><span class="drop-tag drop-currency">Regal Orb</span></td>
+      </tr>
+      <tr class="row-gem">
+        <td><span class="lv">~24</span></td>
+        <td class="area">Mastodon Badlands</td>
+        <td class="action"><span class="cond-badge">🎲 if RNG</span> 🟢 <span class="gem-name">Freezing Mark</span> <span class="gem-source">Skill Gem lv7</span></td>
+        <td></td>
+      </tr>
+
+      <!-- Bone Pit -->
+      <tr class="area-sep">
+        <td><span class="lv">~25</span></td>
+        <td class="area">Bone Pit</td>
+        <td class="action" style="color:var(--muted)">Find relic → Kill boss</td>
+        <td><span class="drop-tag drop-currency">Exalted Orb</span></td>
+      </tr>
+
+      <!-- Town -->
+      <tr class="row-weapon area-sep">
+        <td><span class="lv">~25</span></td>
+        <td class="area">Town</td>
+        <td class="action">
+          🗡️ Weapon check (Wing Spear)
+          <div class="regex-line">
+            <span class="regex-text">ear|mov|[egdl] da.* to a</span>
+            <button class="copy-btn" onclick="copyText(this,'ear|mov|[egdl] da.* to a')">Copy</button>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+
+      <!-- Keth -->
+      <tr class="area-sep">
+        <td><span class="lv">~26</span></td>
+        <td class="area">Keth</td>
+        <td class="action" style="color:var(--muted)">⚡ Play Mechanic</td>
+        <td><span class="drop-tag drop-currency">Gemcutter's Prism</span></td>
+      </tr>
+      <tr class="row-weapon">
+        <td><span class="lv">~26</span></td>
+        <td class="area">Keth</td>
+        <td class="action">🗡️ Find War Spear (Attack Speed mod) → Weapon II</td>
+        <td></td>
+      </tr>
+      <tr class="row-muted">
+        <td><span class="lv">~26</span></td>
+        <td class="area">Keth</td>
+        <td class="action">⚙️ Equip Malic Sceptre</td>
+        <td></td>
+      </tr>
+      <tr class="row-spirit">
+        <td><span class="lv">~26</span></td>
+        <td class="area">Keth</td>
+        <td class="action">🟣 <span class="gem-name">Herald of Ice</span> <span class="gem-source">(Pick up)</span></td>
+        <td></td>
+      </tr>
+      <tr class="row-support">
+        <td><span class="lv">~26</span></td>
+        <td class="area">Keth</td>
+        <td class="action"><span class="cond-badge">🎲 if have</span> 🔵 Herald of Ice ← <span class="gem-name">Elemental Armament II</span></td>
+        <td></td>
+      </tr>
+      <tr class="row-muted">
+        <td><span class="lv">~26</span></td>
+        <td class="area">Keth</td>
+        <td class="action">⚙️ Herald of Ice → Weapon II</td>
+        <td></td>
+      </tr>
+
+      <!-- Buried Shrines -->
+      <tr class="area-sep">
+        <td><span class="lv">~27</span></td>
+        <td class="area">Buried Shrines</td>
+        <td class="action" style="color:var(--muted)">⚡ Play Mechanic</td>
+        <td><span class="drop-tag drop-currency">Lesser Jeweller's</span></td>
+      </tr>
+      <tr class="row-support">
+        <td><span class="lv">~27</span></td>
+        <td class="area">Buried Shrines</td>
+        <td class="action">🔵 ย้าย <span class="gem-name">Elemental Armament II</span> → Twister</td>
+        <td></td>
+      </tr>
+
+      <!-- Town -->
+      <tr class="row-muted area-sep">
+        <td><span class="lv">~27</span></td>
+        <td class="area">Town</td>
+        <td class="action">🛒 Vendor Ring: Life + Flat Damage + Resist</td>
+        <td></td>
+      </tr>
+
+      <!-- Valley of the Titans -->
+      <tr class="area-sep">
+        <td><span class="lv">~28</span></td>
+        <td class="area">Valley of the Titans</td>
+        <td class="action" style="color:var(--muted)">⚡ Play Mechanic</td>
+        <td><span class="drop-tag drop-equip">Unique Item</span></td>
+      </tr>
+
+      <!-- The Titan Grotto -->
+      <tr class="area-sep">
+        <td><span class="lv">~28</span></td>
+        <td class="area">The Titan Grotto</td>
+        <td class="action" style="color:var(--muted)">Kill boss</td>
+        <td><span class="drop-tag drop-currency">Chance Shard</span></td>
+      </tr>
+
+      <!-- Town -->
+      <tr class="row-muted area-sep">
+        <td><span class="lv">~28</span></td>
+        <td class="area">Town</td>
+        <td class="action">🛒 Check vendor</td>
+        <td></td>
+      </tr>
+
+      <!-- Dreadnought Vanguard Boss -->
+      <tr class="row-warn area-sep">
+        <td><span class="lv-exact">29</span></td>
+        <td class="area">Dreadnought Vanguard</td>
+        <td class="action">⚠️ HP ≥ 340 (Lv29)</td>
+        <td><span class="drop-tag drop-currency">Gemcutter's Prism</span></td>
+      </tr>
+      <tr>
+        <td><span class="lv">29</span></td>
+        <td class="area">Dreadnought Vanguard</td>
+        <td class="action" style="color:var(--red);font-weight:600;">☠️ Kill Boss Act 2</td>
+        <td></td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <!-- Skill Setup Act 2 -->
+  <div class="skill-setup">
+    <div class="setup-header">Skill Setup — จบ Act 2</div>
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:rgba(224,184,78,0.06);border-bottom:1px solid var(--border);flex-wrap:wrap;">
+      <span style="font-size:11px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;">⬆️ Upgrade Priority</span>
+      <span style="font-size:12px;color:var(--muted);">ทุกครั้งที่ได้ Uncut Gem :</span>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+        <span style="background:var(--surface2);border:1px solid var(--yellow);color:var(--yellow);border-radius:4px;padding:2px 9px;font-size:12px;font-weight:600;">1 Twister</span>
+        <span style="color:var(--border);font-size:11px;">›</span>
+        <span style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:4px;padding:2px 9px;font-size:12px;font-weight:600;">2 Ice-Tipped Arrows</span>
+        <span style="color:var(--border);font-size:11px;">›</span>
+        <span style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:4px;padding:2px 9px;font-size:12px;font-weight:600;">3 Whirling Slash</span>
+        <span style="color:var(--border);font-size:11px;">›</span>
+        <span style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:4px;padding:2px 9px;font-size:12px;font-weight:600;">4 Barrage</span>
+      </div>
+    </div>
+
+    <div class="setup-row">
+      <div class="setup-skill">🟢 Twister</div>
+      <div class="setup-supports">
+        <span class="sup-chip">Retreat I</span>
+        <span class="sup-chip">Elemental Armament II</span>
+        <span class="sup-chip" style="opacity:0.55;font-style:italic;">Frost Nexus*</span>
+      </div>
+    </div>
+    <div class="setup-row">
+      <div class="setup-skill">🟢 Ice-Tipped Arrows</div>
+      <div class="setup-supports"><span class="no-sup">—</span></div>
+    </div>
+    <div class="setup-row">
+      <div class="setup-skill">🟢 Whirling Slash</div>
+      <div class="setup-supports">
+        <span class="sup-chip">Rage I</span>
+        <span class="sup-chip">Rapid Attack I</span>
+      </div>
+    </div>
+    <div class="setup-row">
+      <div class="setup-skill">🟢 Barrage</div>
+      <div class="setup-supports">
+        <span class="sup-chip">Rapid Casting I</span>
+      </div>
+    </div>
+    <div class="setup-row">
+      <div class="setup-skill">🟢 Tame Beast</div>
+      <div class="setup-supports"><span class="no-sup">—</span></div>
+    </div>
+    <div class="setup-row">
+      <div class="setup-skill spirit">🟣 Herald of Ice</div>
+      <div class="setup-supports">
+        <span class="sup-chip spirit-sup" style="opacity:0.55;font-style:italic;">Elemental Armament II*</span>
+      </div>
+    </div>
+    <div class="setup-row">
+      <div class="setup-skill spirit">🟣 Warbanner</div>
+      <div class="setup-supports">
+        <span class="sup-chip spirit-sup">Prolong Duration</span>
+      </div>
+    </div>
+    <div style="padding:5px 14px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);">* = conditional (RNG drop)</div>
+  </div>
+
+  </div><!-- /body-act2 -->
+</div>
+
+<!-- ═══════════════════════════════════════ ACT 3 ═══ -->
+<div class="act-section" id="act3">
+  <div class="act-header" onclick="toggleAct('act3')">
+    <h2>ACT 3</h2>
+    <span class="act-range">รอข้อมูล</span>
+    <button class="act-toggle" id="btn-act3">▼</button>
+  </div>
+  <div class="act-body" id="body-act3">
+  <div class="placeholder">— รอข้อมูลจากเขม —</div>
+  </div><!-- /body-act3 -->
+</div>
+
+<!-- ═══════════════════════════════════════ ACT 4 ═══ -->
+<div class="act-section" id="act4">
+  <div class="act-header" onclick="toggleAct('act4')">
+    <h2>ACT 4</h2>
+    <span class="act-range">รอข้อมูล</span>
+    <button class="act-toggle" id="btn-act4">▼</button>
+  </div>
+  <div class="act-body" id="body-act4">
+  <div class="placeholder">— รอข้อมูลจากเขม —</div>
+  </div><!-- /body-act4 -->
+</div>
+
+<!-- ═══════════════════════════════════════ ENDGAME ═══ -->
+<div class="act-section" id="endgame">
+  <div class="act-header" onclick="toggleAct('endgame')">
+    <h2>ENDGAME</h2>
+    <span class="act-range">รอข้อมูล</span>
+    <button class="act-toggle" id="btn-endgame">▼</button>
+  </div>
+  <div class="act-body" id="body-endgame">
+  <div class="placeholder">— รอข้อมูลจากเขม —</div>
+  </div><!-- /body-endgame -->
+</div>
+
+<!-- ═══════════════════════════════════════ GEAR ═══ -->
+<div class="act-section" id="gear">
+  <div class="act-header" onclick="toggleAct('gear')">
+    <h2>GEAR</h2>
+    <span class="act-range">รอข้อมูล</span>
+    <button class="act-toggle" id="btn-gear">▼</button>
+  </div>
+  <div class="act-body" id="body-gear">
+  <div class="placeholder">— รอข้อมูลจากเขม —</div>
+  </div><!-- /body-gear -->
+</div>
+
+</div><!-- /container -->
+
+<script>
+function copyText(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+function toggleAct(id) {
+  const body = document.getElementById('body-' + id);
+  const btn = document.getElementById('btn-' + id);
+  const collapsed = body.classList.toggle('collapsed');
+  btn.textContent = collapsed ? '▶' : '▼';
+}
+
+// Highlight active nav on scroll
+const sections = document.querySelectorAll('.act-section[id]');
+const navLinks = document.querySelectorAll('nav a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+}, { passive: true });
+</script>
+</body>
+</html>
