@@ -188,6 +188,13 @@
   .drop-equip    { background: rgba(224,122,78,0.1); border: 1px solid rgba(224,122,78,0.25); color: var(--orange); }
   .drop-rune     { background: rgba(224,184,78,0.1); border: 1px solid rgba(224,184,78,0.25); color: var(--yellow); }
 
+  /* League Drops section */
+  .league-sub { margin-bottom: 16px; }
+  .league-sub-header { font-size: 11px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.08em; padding: 7px 14px; background: var(--surface2); border: 1px solid var(--border); border-bottom: none; border-radius: 6px 6px 0 0; }
+  .league-sub .checklist { border-radius: 0 0 6px 6px; border-top: none; }
+  .col-zone { width: 42%; }
+  .col-type { width: 120px; }
+
   /* Collapse toggle */
   .act-header { cursor: pointer; user-select: none; }
   .act-header:hover { background: rgba(255,255,255,0.015); border-radius: 4px; }
@@ -228,6 +235,7 @@
   <a href="#act4">Act 4 <span class="wip-tag">WIP</span></a>
   <a href="#endgame">Endgame <span class="wip-tag">WIP</span></a>
   <a href="#gear">Gear <span class="wip-tag">WIP</span></a>
+  <a href="#league">League Drops</a>
 </nav>
 
 <div class="container">
@@ -908,6 +916,164 @@
   <div class="act-body" id="body-gear">
   <div class="placeholder">— รอข้อมูลจากเขม —</div>
   </div><!-- /body-gear -->
+</div>
+
+<!-- ═══════════════════════════════════════ LEAGUE DROPS ═══ -->
+<div class="act-section" id="league">
+  <div class="act-header" onclick="toggleAct('league')">
+    <h2 style="color:var(--teal);border-left-color:var(--teal);">LEAGUE DROPS</h2>
+    <span class="act-range">Runeforging — ทุก Zone</span>
+    <button class="act-toggle" id="btn-league">▼</button>
+  </div>
+  <div class="act-body" id="body-league">
+
+  <!-- ACT 1 -->
+  <div class="league-sub">
+    <div class="league-sub-header">Act 1</div>
+    <table class="checklist">
+      <thead><tr><th class="col-zone">Zone</th><th class="col-type">ประเภท</th><th>Drop</th></tr></thead>
+      <tbody>
+        <tr><td>Clearfell</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Orb of Transmutation</td></tr>
+        <tr><td>Mud Burrow</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Orb of Augmentation</td></tr>
+        <tr><td>Grelwood</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Orb of Transmutation</td></tr>
+        <tr><td>Red Vale</td><td><span class="drop-tag drop-skill">Skill Gem</span></td><td>Uncut Skill Gem lv2</td></tr>
+        <tr><td>Grim Tangle</td><td><span class="drop-tag drop-skill">Skill Gem</span></td><td>Uncut Skill Gem lv3</td></tr>
+        <tr><td>Cemetery of Eternals</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Regal Orb</td></tr>
+        <tr><td>Tomb of the Consort</td><td><span class="drop-tag drop-equip">Equipment</span></td><td>Amulet (Normal)</td></tr>
+        <tr><td>Mausoleum of the Praetor</td><td><span class="drop-tag drop-rune">Rune</span></td><td>Lesser Rune (random)</td></tr>
+        <tr><td>Hunting Grounds</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Exalted Orb</td></tr>
+        <tr><td>Freythorn</td><td><span class="drop-tag drop-support">Support Gem</span></td><td>Uncut Support Gem lv1</td></tr>
+        <tr><td>Ogham Farmlands</td><td><span class="drop-tag drop-skill">Skill Gem</span></td><td>Uncut Skill Gem lv4</td></tr>
+        <tr><td>Ogham Village</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Artificer's Orb</td></tr>
+        <tr><td>The Manor Ramparts</td><td><span class="drop-tag drop-skill">Skill Gem</span></td><td>Uncut Skill Gem lv5</td></tr>
+        <tr><td>Ogham Manor</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Alchemy Orb</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ACT 2 -->
+  <div class="league-sub">
+    <div class="league-sub-header">Act 2</div>
+    <table class="checklist">
+      <thead><tr><th class="col-zone">Zone</th><th class="col-type">ประเภท</th><th>Drop</th></tr></thead>
+      <tbody>
+        <tr><td>Vastiri Outskirts</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Exalted Orb</td></tr>
+        <tr><td>Mawdun Quarry</td><td><span class="drop-tag drop-spirit">Spirit Gem</span></td><td>Uncut Spirit Gem lv5</td></tr>
+        <tr><td>Traitor's Passage</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Artificer's Orb</td></tr>
+        <tr><td>The Halani Gates</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Exalted Orb</td></tr>
+        <tr><td>Mastodon Badlands</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Regal Orb</td></tr>
+        <tr><td>The Bone Pits</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Exalted Orb</td></tr>
+        <tr><td>Keth</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Gemcutter's Prism</td></tr>
+        <tr><td>The Lost City</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Orb of Alchemy</td></tr>
+        <tr><td>Buried Shrines</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Lesser Jeweller's Orb</td></tr>
+        <tr><td>Valley of the Titans</td><td><span class="drop-tag drop-equip">Equipment</span></td><td>Unique Item (random)</td></tr>
+        <tr><td>The Titan Grotto</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Chance Shard</td></tr>
+        <tr><td>Deshar</td><td><span class="drop-tag drop-rune">Rune</span></td><td>Rune (random)</td></tr>
+        <tr><td>Spires of Deshar</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Gemcutter's Prism</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ACT 3 -->
+  <div class="league-sub">
+    <div class="league-sub-header">Act 3</div>
+    <table class="checklist">
+      <thead><tr><th class="col-zone">Zone</th><th class="col-type">ประเภท</th><th>Drop</th></tr></thead>
+      <tbody>
+        <tr><td>Sandswept Marsh</td><td><span class="drop-tag drop-support">Support Gem</span></td><td>Uncut Support Gem lv3</td></tr>
+        <tr><td>Jungle Ruins</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Orb of Alchemy</td></tr>
+        <tr><td>Venom Crypts</td><td><span class="drop-tag drop-equip">Equipment</span></td><td>Ring (random)</td></tr>
+        <tr><td>Infested Barrens</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Exalted Orb</td></tr>
+        <tr><td>The Azak Bog</td><td><span class="drop-tag drop-rune">Rune</span></td><td>Rune (random)</td></tr>
+        <tr><td>Chimeral Wetlands</td><td><span class="drop-tag drop-skill">Skill Gem</span></td><td>Uncut Skill Gem lv9</td></tr>
+        <tr><td>Jiquani's Machinarium</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Artificer's Orb</td></tr>
+        <tr><td>Jiquani's Sanctum</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Exalted Orb</td></tr>
+        <tr><td>Matlan Waterways</td><td><span class="drop-tag drop-spirit">Spirit Gem</span></td><td>Uncut Spirit Gem lv10</td></tr>
+        <tr><td>Drowned City</td><td><span class="drop-tag drop-support">Support Gem</span></td><td>Uncut Support Gem lv3</td></tr>
+        <tr><td>Molten Vault</td><td><span class="drop-tag drop-equip">Equipment</span></td><td>Unique Item (random)</td></tr>
+        <tr><td>Apex of Filth</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Vaal Orb</td></tr>
+        <tr><td>Temple of Kopec</td><td><span class="drop-tag drop-spirit">Spirit Gem</span></td><td>Uncut Spirit Gem lv11</td></tr>
+        <tr><td>Utzaal</td><td><span class="drop-tag drop-equip">Equipment</span></td><td>Jewel or Time-Lost Jewel</td></tr>
+        <tr><td>The Black Chambers</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Vaal Orb</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ACT 4 -->
+  <div class="league-sub">
+    <div class="league-sub-header">Act 4</div>
+    <table class="checklist">
+      <thead><tr><th class="col-zone">Zone</th><th class="col-type">ประเภท</th><th>Drop</th></tr></thead>
+      <tbody>
+        <tr><td>Isle of Kin</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Gemcutter's Prism</td></tr>
+        <tr><td>Volcanic Warrens</td><td><span class="drop-tag drop-support">Support Gem</span></td><td>Uncut Support Gem lv4</td></tr>
+        <tr><td>Abandoned Prison</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Exalted Orb</td></tr>
+        <tr><td>Solitary Confinement</td><td><span class="drop-tag drop-rune">Rune</span></td><td>Rune (random)</td></tr>
+        <tr><td>Whakapanu Island</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Artificer's Orb</td></tr>
+        <tr><td>Singing Caverns</td><td><span class="drop-tag drop-equip">Equipment</span></td><td>Charm (random)</td></tr>
+        <tr><td>Shrike Island</td><td><span class="drop-tag drop-support">Support Gem</span></td><td>Uncut Support Gem lv4</td></tr>
+        <tr><td>Kedge Bay</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Exalted Orb</td></tr>
+        <tr><td>Journey's End</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Alchemy Orb</td></tr>
+        <tr><td>Eye of Hinekora</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Chaos Orb</td></tr>
+        <tr><td>Halls of the Dead</td><td><span class="drop-tag drop-rune">Rune</span></td><td>Rune (random)</td></tr>
+        <tr><td>Arastas</td><td><span class="drop-tag drop-skill">Skill Gem</span></td><td>Uncut Skill Gem lv12</td></tr>
+        <tr><td>The Excavation</td><td><span class="drop-tag drop-equip">Equipment</span></td><td>Amulet Rare (random)</td></tr>
+        <tr><td>Ngakanu</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Greater Jeweller's Orb</td></tr>
+        <tr><td>Heart of the Tribe</td><td><span class="drop-tag drop-spirit">Spirit Gem</span></td><td>Uncut Spirit Gem lv12</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- INTERLUDE A1 -->
+  <div class="league-sub">
+    <div class="league-sub-header">Interlude — A1</div>
+    <table class="checklist">
+      <thead><tr><th class="col-zone">Zone</th><th class="col-type">ประเภท</th><th>Drop</th></tr></thead>
+      <tbody>
+        <tr><td>Scorched Farmlands</td><td><span class="drop-tag drop-support">Support Gem</span></td><td>Uncut Support Gem lv4</td></tr>
+        <tr><td>Stones of Serle</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Exalted Orb</td></tr>
+        <tr><td>The Blackwood</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Greater Orb of Transmutation</td></tr>
+        <tr><td>Holten</td><td><span class="drop-tag drop-rune">Rune</span></td><td>Greater Rune (random)</td></tr>
+        <tr><td>Wolvenhold</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Greater Orb of Augmentation</td></tr>
+        <tr><td>Holten Estate</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Artificer's Orb</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- INTERLUDE A2 -->
+  <div class="league-sub">
+    <div class="league-sub-header">Interlude — A2</div>
+    <table class="checklist">
+      <thead><tr><th class="col-zone">Zone</th><th class="col-type">ประเภท</th><th>Drop</th></tr></thead>
+      <tbody>
+        <tr><td>The Khari Crossing</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Gemcutter's Prism</td></tr>
+        <tr><td>Pools of Khatal</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Alchemy Orb</td></tr>
+        <tr><td>Sel Khari Sanctuary</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Orb of Chance</td></tr>
+        <tr><td>The Galai Gates</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Greater Orb of Augmentation</td></tr>
+        <tr><td>Qimah</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Exalted Orb</td></tr>
+        <tr><td>Qimah Reservoir</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Greater Orb of Transmutation</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- INTERLUDE A3 -->
+  <div class="league-sub">
+    <div class="league-sub-header">Interlude — A3</div>
+    <table class="checklist">
+      <thead><tr><th class="col-zone">Zone</th><th class="col-type">ประเภท</th><th>Drop</th></tr></thead>
+      <tbody>
+        <tr><td>Ashen Forest</td><td><span class="drop-tag drop-equip">Equipment</span></td><td>Belt Rare (random)</td></tr>
+        <tr><td>Kirar Village</td><td><span class="drop-tag drop-rune">Rune</span></td><td>Greater Rune (random)</td></tr>
+        <tr><td>Glacial Tarn</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Greater Orb of Augmentation</td></tr>
+        <tr><td>Howling Caves</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Chaos Orb</td></tr>
+        <tr><td>Kirar Peaks</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Greater Orb of Transmutation</td></tr>
+        <tr><td>Etched Ravine</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Exalted Orb</td></tr>
+        <tr><td>The Cuachic Vault</td><td><span class="drop-tag drop-currency">Currency</span></td><td>Vaal Orb</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  </div><!-- /body-league -->
 </div>
 
 </div><!-- /container -->
