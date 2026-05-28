@@ -237,7 +237,7 @@
 <nav>
   <a href="#act1" class="active">Act 1</a>
   <a href="#act2">Act 2 <span class="wip-tag">WIP</span></a>
-  <a href="#act3">Act 3 <span class="wip-tag">WIP</span></a>
+  <a href="#act3">Act 3</a>
   <a href="#act4">Act 4 <span class="wip-tag">WIP</span></a>
   <a href="#endgame">Endgame <span class="wip-tag">WIP</span></a>
   <a href="#gear">Gear <span class="wip-tag">WIP</span></a>
@@ -347,9 +347,65 @@
     <div style="padding:5px 14px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);">* = conditional (RNG drop)</div>
   </div>
 
-  <!-- Act 3 pane (placeholder) -->
+  <!-- Act 3 pane -->
   <div class="skill-pane hidden" id="skill-pane-3">
-    <div style="padding:20px 14px;color:var(--muted);font-size:13px;">Act 3 — รอข้อมูล</div>
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:rgba(224,184,78,0.06);border-bottom:1px solid var(--border);flex-wrap:wrap;">
+      <span style="font-size:11px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;">⬆️ Upgrade Priority</span>
+      <span style="font-size:12px;color:var(--muted);">ทุกครั้งที่ได้ Uncut Gem :</span>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+        <span style="background:var(--surface2);border:1px solid var(--yellow);color:var(--yellow);border-radius:4px;padding:2px 9px;font-size:12px;font-weight:600;">1 Twister</span>
+        <span style="color:var(--border);font-size:11px;">›</span>
+        <span style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:4px;padding:2px 9px;font-size:12px;font-weight:600;">2 Ice-Tipped Arrows</span>
+        <span style="color:var(--border);font-size:11px;">›</span>
+        <span style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:4px;padding:2px 9px;font-size:12px;font-weight:600;">3 Whirling Slash</span>
+        <span style="color:var(--border);font-size:11px;">›</span>
+        <span style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:4px;padding:2px 9px;font-size:12px;font-weight:600;">4 Barrage</span>
+      </div>
+    </div>
+    <div class="setup-row">
+      <div class="setup-skill">🟢 Twister</div>
+      <div class="setup-supports">
+        <span class="sup-chip">Retreat II</span>
+        <span class="sup-chip">Elemental Armament II</span>
+        <span class="sup-chip" style="opacity:0.55;font-style:italic;">Frost Nexus*</span>
+      </div>
+    </div>
+    <div class="setup-row">
+      <div class="setup-skill">🟢 Ice-Tipped Arrows</div>
+      <div class="setup-supports"><span class="no-sup">—</span></div>
+    </div>
+    <div class="setup-row">
+      <div class="setup-skill">🟢 Whirling Slash</div>
+      <div class="setup-supports"><span class="sup-chip">Rage I</span><span class="sup-chip">Rapid Attack I</span></div>
+    </div>
+    <div class="setup-row">
+      <div class="setup-skill">🟢 Barrage</div>
+      <div class="setup-supports"><span class="sup-chip">Rapid Casting I</span></div>
+    </div>
+    <div class="setup-row">
+      <div class="setup-skill">🟢 Tame Beast</div>
+      <div class="setup-supports"><span class="no-sup">—</span></div>
+    </div>
+    <div class="setup-row">
+      <div class="setup-skill">🟢 Thunderous Leap</div>
+      <div class="setup-supports"><span class="no-sup">—</span></div>
+    </div>
+    <div class="setup-row">
+      <div class="setup-skill spirit">🟣 Herald of Ice</div>
+      <div class="setup-supports">
+        <span class="sup-chip spirit-sup">Magnified Area II</span>
+        <span class="sup-chip spirit-sup" style="opacity:0.55;font-style:italic;">Elemental Armament II*</span>
+      </div>
+    </div>
+    <div class="setup-row">
+      <div class="setup-skill spirit">🟣 Warbanner</div>
+      <div class="setup-supports"><span class="sup-chip spirit-sup">Prolong Duration II</span></div>
+    </div>
+    <div class="setup-row">
+      <div class="setup-skill spirit">🟣 Combat Frenzy</div>
+      <div class="setup-supports"><span class="no-sup">—</span></div>
+    </div>
+    <div style="padding:5px 14px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);">* = conditional (RNG drop)</div>
   </div>
 </div>
 
@@ -871,11 +927,109 @@
 <div class="act-section" id="act3">
   <div class="act-header" onclick="toggleAct('act3')">
     <h2>ACT 3</h2>
-    <span class="act-range">รอข้อมูล</span>
+    <span class="act-range">Lv 29 – 42</span>
     <button class="act-toggle" id="btn-act3">▼</button>
   </div>
   <div class="act-body" id="body-act3">
-  <div class="placeholder">— รอข้อมูลจากเขม —</div>
+
+  <div class="slots-bar">
+    <div class="slot-chip"><span class="dot dot-green"></span>Active ใหม่: Thunderous Leap</div>
+    <div class="slot-chip"><span class="dot dot-blue"></span>Support อัปเกรด: Retreat II (Twister) · Magnified Area II (Herald of Ice) · Prolong Duration II (Warbanner)</div>
+    <div class="slot-chip"><span class="dot dot-purple"></span>Spirit ใหม่: Combat Frenzy lv10</div>
+  </div>
+
+  <table class="checklist">
+    <thead>
+      <tr>
+        <th class="col-lv">Lv</th>
+        <th class="col-area">Area</th>
+        <th>Action</th>
+        <th class="col-drop">League Drop</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- Sandswept Marsh -->
+      <tr class="row-muted area-sep">
+        <td><span class="lv">~29</span></td>
+        <td class="area">Sandswept Marsh</td>
+        <td class="action">⚡ Play Mechanic → Uncut Support lv3</td>
+        <td><span class="drop-tag drop-support">Support lv3</span></td>
+      </tr>
+      <tr class="row-support">
+        <td><span class="lv">~29</span></td>
+        <td class="area">Sandswept Marsh</td>
+        <td class="action">🔵 <span class="gem-name">Retreat II</span> <span class="gem-source">→ Twister (แทน Retreat I)</span></td>
+        <td></td>
+      </tr>
+      <tr class="row-muted">
+        <td><span class="lv">~29</span></td>
+        <td class="area">Sandswept Marsh</td>
+        <td class="action"><span class="cond-badge">🎲 if RNG</span> Lesser Jeweller's Orb → ใส่ Twister (ถ้ายังไม่ 4-link)</td>
+        <td></td>
+      </tr>
+
+      <!-- Jungle Ruins -->
+      <tr class="row-support area-sep">
+        <td><span class="lv">~31</span></td>
+        <td class="area">Jungle Ruins</td>
+        <td class="action">🔵 <span class="gem-name">Magnified Area II</span> <span class="gem-source">→ Herald of Ice</span></td>
+        <td><span class="drop-tag drop-currency">Alchemy Orb</span></td>
+      </tr>
+
+      <!-- Infested Barrens -->
+      <tr class="row-support area-sep">
+        <td><span class="lv">~33</span></td>
+        <td class="area">Infested Barrens</td>
+        <td class="action">🔵 <span class="gem-name">Prolong Duration II</span> <span class="gem-source">→ Warbanner (แทน Prolong Duration I)</span></td>
+        <td><span class="drop-tag drop-currency">Exalted Orb</span></td>
+      </tr>
+
+      <!-- The Azak Bog -->
+      <tr class="row-gem area-sep">
+        <td><span class="lv">~35</span></td>
+        <td class="area">The Azak Bog</td>
+        <td class="action">🟢 <span class="gem-name">Thunderous Leap</span> <span class="gem-source">Gem lv9 — ใช้กระโดดข้ามสิ่งกีดขวาง</span></td>
+        <td><span class="drop-tag drop-rune">Rune (random)</span></td>
+      </tr>
+
+      <!-- The Molten Vault -->
+      <tr class="row-muted area-sep">
+        <td><span class="lv">~37</span></td>
+        <td class="area">The Molten Vault</td>
+        <td class="action">⚡ Play Mechanic → Unique item</td>
+        <td><span class="drop-tag drop-equip">Unique</span></td>
+      </tr>
+      <tr>
+        <td><span class="lv">~37</span></td>
+        <td class="area">The Molten Vault</td>
+        <td class="action" style="color:var(--red);font-weight:600;">☠️ Kill Boss</td>
+        <td></td>
+      </tr>
+
+      <!-- Aggorat -->
+      <tr class="row-spirit area-sep">
+        <td><span class="lv">~42</span></td>
+        <td class="area">Aggorat</td>
+        <td class="action">🟣 <span class="gem-name">Combat Frenzy</span> <span class="gem-source">Spirit lv10 (Quest)</span></td>
+        <td></td>
+      </tr>
+      <tr class="row-warn">
+        <td><span class="lv">~42</span></td>
+        <td class="area">Aggorat</td>
+        <td class="action">⚠️ HP เต็มก่อน Boss Act 3</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="lv">~42</span></td>
+        <td class="area">Aggorat</td>
+        <td class="action" style="color:var(--red);font-weight:600;">☠️ Kill Boss → จบ Act 3</td>
+        <td></td>
+      </tr>
+
+    </tbody>
+  </table>
+
   </div><!-- /body-act3 -->
 </div>
 
