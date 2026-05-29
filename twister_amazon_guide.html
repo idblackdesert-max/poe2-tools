@@ -202,6 +202,19 @@
   .act-toggle:hover { color: var(--yellow); border-color: var(--yellow); }
   .act-body.collapsed { display: none; }
 
+  .league-tab-bar { display:flex; gap:4px; padding:8px 14px 0; background:var(--surface2); border-bottom:1px solid var(--border); }
+  .league-tab { padding:4px 14px; border-radius:4px 4px 0 0; font-size:12px; font-weight:700; cursor:pointer; border:1px solid transparent; border-bottom:none; color:var(--muted); background:transparent; transition:all 0.15s; }
+  .league-tab:hover { color:var(--text); background:var(--surface); }
+  .league-tab.active { color:var(--teal); background:var(--surface); border-color:var(--border); }
+  .league-pane.hidden { display:none; }
+  .drop-tag.drop-permanent { background:rgba(160,127,224,0.1); border-color:rgba(160,127,224,0.3); color:var(--purple); }
+  .drop-tag.drop-utility { background:rgba(78,203,192,0.1); border-color:rgba(78,203,192,0.3); color:var(--teal); }
+  .opt-pri-high { color:var(--green); font-weight:600; font-size:12px; white-space:nowrap; }
+  .opt-pri-med  { color:var(--yellow); font-size:12px; white-space:nowrap; }
+  .opt-pri-low  { color:var(--muted); font-size:12px; white-space:nowrap; }
+  .opt-status-ok { background:rgba(78,203,113,0.1); border:1px solid rgba(78,203,113,0.3); color:var(--green); border-radius:3px; padding:1px 6px; font-size:10px; font-weight:700; }
+  .opt-status-check { background:rgba(224,184,78,0.1); border:1px solid rgba(224,184,78,0.3); color:var(--yellow); border-radius:3px; padding:1px 6px; font-size:10px; font-weight:700; }
+  .opt-note { font-size:11px; color:var(--muted); display:block; margin-top:2px; }
   .skill-tab-bar { display:flex; gap:4px; padding:10px 14px 0; background:var(--surface2); border-bottom:1px solid var(--border); }
   .skill-tab { padding:5px 14px; border-radius:4px 4px 0 0; font-size:12px; font-weight:700; cursor:pointer; border:1px solid transparent; border-bottom:none; color:var(--muted); background:transparent; transition:all 0.15s; }
   .skill-tab:hover { color:var(--text); background:var(--surface); }
@@ -1066,6 +1079,13 @@
   </div>
   <div class="act-body" id="body-league">
 
+  <div class="league-tab-bar">
+    <button class="league-tab active" onclick="switchLeagueTab(1)">League Mechanic</button>
+    <button class="league-tab" onclick="switchLeagueTab(2)">จุดลับ</button>
+  </div>
+
+  <div class="league-pane" id="league-pane-1">
+
   <!-- ACT 1 -->
   <div class="league-sub">
     <div class="league-sub-header">Act 1</div>
@@ -1212,6 +1232,78 @@
     </table>
   </div>
 
+  </div><!-- /league-pane-1 -->
+
+  <div class="league-pane hidden" id="league-pane-2">
+
+  <!-- OPT ACT 1 -->
+  <div class="league-sub">
+    <div class="league-sub-header">Act 1 — Island of Ogham</div>
+    <table class="checklist">
+      <thead><tr><th class="col-zone">Zone</th><th>จุดที่แวะ</th><th class="col-drop">ของที่ได้</th><th>ควรแวะ</th><th>สถานะ</th></tr></thead>
+      <tbody>
+        <tr><td class="area">Clearfell</td><td>Mysterious Campsite Chest</td><td><span class="drop-tag drop-skill">Uncut Skill lv1</span></td><td><span class="opt-pri-high">ควรแวะ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">The Grelwood</td><td>Areagne's Hut</td><td><span class="drop-tag drop-support">Uncut Support lv1</span> <span class="opt-note">+ Life Flask + Mana Flask</span></td><td><span class="opt-pri-high">ควรแวะ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Cemetery of Eternals</td><td>Sarcophagus (Grieving Epitaph)</td><td><span class="drop-tag drop-equip">Ring (Normal)</span></td><td><span class="opt-pri-low">ตามสถานการณ์</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Tomb of the Consort</td><td>Haunted Treasure / Eternal Knight</td><td><span class="drop-tag drop-support">Uncut Support lv1</span></td><td><span class="opt-pri-high">ควรแวะ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Hunting Grounds</td><td>Ritual Altar</td><td><span class="drop-tag drop-skill">Uncut Skill lv4</span></td><td><span class="opt-pri-med">ตาม build</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Hunting Grounds</td><td>Dryadic Ritual</td><td><span class="drop-tag drop-support">Uncut Support lv1</span></td><td><span class="opt-pri-high">ควรแวะ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Ogham Farmlands</td><td>Una's Lute Box</td><td><span class="drop-tag drop-permanent">Book of Specialisation</span> <span class="opt-note">+2 Weapon Set Skill Points (ถาวร)</span></td><td><span class="opt-pri-high">ควรแวะ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Ogham Farmlands</td><td>Crop Circle</td><td><span class="drop-tag drop-skill">Uncut Skill lv4</span></td><td><span class="opt-pri-med">ตาม build</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Ogham Village</td><td>Renly's Workshop / Smithing Tools</td><td><span class="drop-tag drop-utility">Unlock Salvage Bench</span></td><td><span class="opt-pri-high">ควรแวะ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Ogham Village</td><td>Blacksmith's Chest</td><td><span class="drop-tag drop-currency">Artificer's Orb</span> <span class="opt-note">+ Blank Lesser Rune</span></td><td><span class="opt-pri-high">ควรแวะ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">The Manor Ramparts</td><td>The Gallows</td><td><span class="drop-tag drop-support">Uncut Support lv1</span></td><td><span class="opt-pri-high">ควรแวะ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- OPT ACT 2 -->
+  <div class="league-sub">
+    <div class="league-sub-header">Act 2 — Vastiri</div>
+    <table class="checklist">
+      <thead><tr><th class="col-zone">Zone</th><th>จุดที่แวะ</th><th class="col-drop">ของที่ได้</th><th>ควรแวะ</th><th>สถานะ</th></tr></thead>
+      <tbody>
+        <tr><td class="area">Mawdun Quarry</td><td>Faridun War Cache</td><td><span class="drop-tag drop-currency">Artificer's Orb</span></td><td><span class="opt-pri-high">ควรแวะ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Mawdun Mine</td><td>Munitions Bunker</td><td><span class="drop-tag drop-skill">Uncut Skill lv6</span></td><td><span class="opt-pri-med">ตาม build</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Traitor's Passage</td><td>Bell Chest</td><td><span class="drop-tag drop-skill">Uncut Skill lv6</span></td><td><span class="opt-pri-med">ตาม build</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Keth</td><td>Abandoned Prayer</td><td><span class="drop-tag drop-equip">Magic Amulet</span></td><td><span class="opt-pri-low">ตามสถานการณ์</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">The Lost City</td><td>The Ninth Treasure of Keth</td><td><span class="drop-tag drop-equip">Magic Jewel</span></td><td><span class="opt-pri-low">ตามสถานการณ์</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">The Lost City</td><td>Golden Tomb</td><td><span class="drop-tag drop-spirit">Uncut Spirit lv6/7</span></td><td><span class="opt-pri-high">ควรแวะ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Buried Shrines</td><td>Suspicious Sarcophagus</td><td><span class="drop-tag drop-support">Uncut Support lv1</span></td><td><span class="opt-pri-high">ควรแวะ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Buried Shrines</td><td>Elemental Offering</td><td><span class="drop-tag drop-equip">Magic Ring (resist)</span> <span class="opt-note">Ruby / Sapphire / Topaz — เลือกตาม resist ที่ขาด</span></td><td><span class="opt-pri-med">ตามบอสที่เจอ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">The Titan Grotto</td><td>Titan's Sword</td><td><span class="drop-tag drop-rune">Lesser Rune (random)</span></td><td><span class="opt-pri-med">ตามสถานการณ์</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Mastodon Badlands</td><td>Fossilised Memorial</td><td><span class="drop-tag drop-support">Uncut Support lv1</span></td><td><span class="opt-pri-high">ควรแวะ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Deshar</td><td>Fallen Rhoa Rider / Final Letter</td><td><span class="drop-tag drop-permanent">Book of Specialisation</span> <span class="opt-note">+2 Weapon Set Skill Points (ถาวร)</span></td><td><span class="opt-pri-high">ควรแวะ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Deshar</td><td>The Unremembered</td><td><span class="drop-tag drop-currency">Artificer's Orb</span></td><td><span class="opt-pri-med">ตาม route</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Deshar</td><td>Rare Vulture Monsters</td><td><span class="drop-tag drop-utility">Djinn Barya</span> <span class="opt-note">ใช้เปิด Trial</span></td><td><span class="opt-pri-med">ตามต้องการ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Path of Mourning</td><td>Hushed Urn</td><td><span class="drop-tag drop-skill">Uncut Skill lv8</span></td><td><span class="opt-pri-med">ตาม build</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">The Spires of Deshar</td><td>Sisters of Garukhan</td><td><span class="drop-tag drop-permanent">+10% Lightning Resist</span> <span class="opt-note">ถาวร — ไม่ควรพลาด</span></td><td><span class="opt-pri-high">ควรแวะ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- OPT ACT 3 -->
+  <div class="league-sub">
+    <div class="league-sub-header">Act 3 — Vaal Jungle</div>
+    <table class="checklist">
+      <thead><tr><th class="col-zone">Zone</th><th>จุดที่แวะ</th><th class="col-drop">ของที่ได้</th><th>ควรแวะ</th><th>สถานะ</th></tr></thead>
+      <tbody>
+        <tr><td class="area">Sandswept Marsh</td><td>Foul Ritual</td><td><span class="drop-tag drop-skill">Uncut Skill lv9</span></td><td><span class="opt-pri-med">ตาม build</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Sandswept Marsh</td><td>Azak/Orok Campfire</td><td><span class="drop-tag drop-currency">Lesser Jeweller's Orb</span></td><td><span class="opt-pri-high">ควรแวะ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Sandswept Marsh</td><td>Hanging Tree</td><td><span class="drop-tag drop-equip">Magic Ring</span></td><td><span class="opt-pri-low">ตามสถานการณ์</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Jungle Ruins</td><td>Jungle Grave (Servi)</td><td><span class="drop-tag drop-equip">Rare Rawhide / Linen Belt</span></td><td><span class="opt-pri-med">ตามสถานการณ์</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">The Venom Crypts</td><td>Corpse Snake Venom</td><td><span class="drop-tag drop-permanent">Permanent Buff (เลือก 1)</span> <span class="opt-note">+ Artificer's Orb</span></td><td><span class="opt-pri-high">ควรแวะ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Infested Barrens</td><td>Cave Location</td><td><span class="drop-tag drop-support">Uncut Support</span></td><td><span class="opt-pri-med">ตาม route</span></td><td><span class="opt-status-check">เช็กซ้ำ</span></td></tr>
+        <tr><td class="area">Chimeral Wetlands</td><td>Toxic Bloom</td><td><span class="drop-tag drop-equip">Magic Amulet</span></td><td><span class="opt-pri-low">ตามสถานการณ์</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Jiquani's Sanctum</td><td>Grand Soul Core Nexus</td><td><span class="drop-tag drop-spirit">Uncut Spirit lv10</span></td><td><span class="opt-pri-high">ควรแวะ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Jiquani's Sanctum</td><td>Paquate's Mechanism / Vaal Pedestal</td><td><span class="drop-tag drop-utility">Free Vaal Corruption</span> <span class="opt-note">corrupt ไอเทม 1 ชิ้นโดยไม่เสีย Vaal Orb</span></td><td><span class="opt-pri-med">ตามของที่มี</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+        <tr><td class="area">Aggorat</td><td>Blood Sacrifice</td><td><span class="drop-tag drop-permanent">Book of Specialisation</span> <span class="opt-note">+2 Weapon Set Skill Points (ถาวร) — Sacrificial Heart drop จาก Vaal Goliaths</span></td><td><span class="opt-pri-high">ควรแวะ</span></td><td><span class="opt-status-ok">ยืนยัน</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  </div><!-- /league-pane-2 -->
+
   </div><!-- /body-league -->
 </div>
 
@@ -1232,6 +1324,11 @@ function toggleAct(id) {
   const btn = document.getElementById('btn-' + id);
   const collapsed = body.classList.toggle('collapsed');
   btn.textContent = collapsed ? '▶' : '▼';
+}
+
+function switchLeagueTab(n) {
+  document.querySelectorAll('.league-tab').forEach((t,i) => t.classList.toggle('active', i+1===n));
+  document.querySelectorAll('.league-pane').forEach((p,i) => p.classList.toggle('hidden', i+1!==n));
 }
 
 function switchSkillTab(act) {
